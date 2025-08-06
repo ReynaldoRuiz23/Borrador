@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree ERP - Configuración del Sistema</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        .sidebar-menu i {
+            width: 18px;
+            height: 18px;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: #1a1a1a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-group h4 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-field {
+            margin-bottom: 15px;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-field input, .form-field select, .form-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+            outline: none;
+            border-color: #1a1a1a;
+            box-shadow: 0 0 0 3px rgba(26,26,26,0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background-color: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #333;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #1a1a1a;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h5 {
+            color: #1565c0;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .info-box p {
+            color: #1976d2;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .warning-box h5 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .warning-box p {
+            color: #856404;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .danger-box h5 {
+            color: #721c24;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .danger-box p {
+            color: #721c24;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .responsive-table {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .metric-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .metric-card h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            color: #1a1a1a;
+        }
+
+        .metric-card p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-switch .slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch input:checked + .slider {
+            transform: translateX(26px);
+        }
+
+        .toggle-switch input:checked ~ .toggle-switch {
+            background-color: #1a1a1a;
+        }
+
+        .log-entry {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .log-timestamp {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .log-level-info {
+            color: #17a2b8;
+        }
+
+        .log-level-warning {
+            color: #ffc107;
+        }
+
+        .log-level-error {
+            color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Configuración del Sistema</h1>
+            <p>Administra y configura todos los aspectos técnicos del sistema SmartFree ERP</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="sidebar">
+                <h3>Configuraciones</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active" data-section="general"><i data-lucide="settings"></i>General</a></li>
+                    <li><a href="#" data-section="base-datos"><i data-lucide="database"></i>Base de Datos</a></li>
+                    <li><a href="#" data-section="notificaciones"><i data-lucide="bell"></i>Notificaciones</a></li>
+                    <li><a href="#" data-section="seguridad"><i data-lucide="shield"></i>Seguridad</a></li>
+                    <li><a href="#" data-section="respaldos"><i data-lucide="hard-drive"></i>Respaldos</a></li>
+                    <li><a href="#" data-section="logs"><i data-lucide="file-text"></i>Logs del Sistema</a></li>
+                    <li><a href="#" data-section="maintenance"><i data-lucide="wrench"></i>Mantenimiento</a></li>
+                    <li><a href="#" data-section="performance"><i data-lucide="activity"></i>Rendimiento</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <!-- CONFIGURACIÓN GENERAL -->
+                <div class="section active" id="general">
+                    <div class="section-header">
+                        <i data-lucide="settings" style="color: #1a1a1a;"></i>
+                        <h2>Configuración General del Sistema</h2>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Configuración Principal</h5>
+                        <p>Ajusta los parámetros generales de funcionamiento del sistema ERP.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <h4><i data-lucide="globe"></i>Configuración Regional</h4>
+                            <div class="form-field">
+                                <label>Zona horaria</label>
+                                <select>
+                                    <option value="America/Mexico_City" selected>America/Mexico_City (GMT-6)</option>
+                                    <option value="America/Tijuana">America/Tijuana (GMT-8)</option>
+                                    <option value="America/Cancun">America/Cancun (GMT-5)</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Idioma del sistema</label>
+                                <select>
+                                    <option value="es" selected>Español (México)</option>
+                                    <option value="en">English (US)</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Formato de fecha</label>
+                                <select>
+                                    <option value="d/m/Y" selected>DD/MM/YYYY</option>
+                                    <option value="m/d/Y">MM/DD/YYYY</option>
+                                    <option value="Y-m-d">YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Formato de hora</label>
+                                <select>
+                                    <option value="24" selected>24 horas (14:30)</option>
+                                    <option value="12">12 horas (2:30 PM)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <h4><i data-lucide="dollar-sign"></i>Configuración Monetaria</h4>
+                            <div class="form-field">
+                                <label>Moneda principal</label>
+                                <select>
+                                    <option value="MXN" selected>Peso Mexicano (MXN)</option>
+                                    <option value="USD">Dólar Americano (USD)</option>
+                                    <option value="EUR">Euro (EUR)</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Símbolo de moneda</label>
+                                <input type="text" value="$" maxlength="3">
+                            </div>
+                            <div class="form-field">
+                                <label>Decimales a mostrar</label>
+                                <select>
+                                    <option value="0">0 (100)</option>
+                                    <option value="2" selected>2 (100.00)</option>
+                                    <option value="4">4 (100.0000)</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Separador de miles</label>
+                                <select>
+                                    <option value="," selected>Coma (1,000)</option>
+                                    <option value=".">Punto (1.000)</option>
+                                    <option value=" ">Espacio (1 000)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h4><i data-lucide="cpu"></i>Configuración de Rendimiento</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Registros por página</label>
+                                <select>
+                                    <option value="10">10</option>
+                                    <option value="25" selected>25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Tiempo de sesión (minutos)</label>
+                                <input type="number" value="120" min="30" max="480">
+                            </div>
+                            <div class="form-field">
+                                <label>Cache de reportes (horas)</label>
+                                <input type="number" value="24" min="1" max="168">
+                            </div>
+                            <div class="form-field">
+                                <label>Límite de archivos subidos (MB)</label>
+                                <input type="number" value="10" min="1" max="100">
+                            </div>
+                        </div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="enable_cache" checked>
+                                <label for="enable_cache">Habilitar cache del sistema</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="enable_compression" checked>
+                                <label for="enable_compression">Compresión de respuestas</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lazy_loading" checked>
+                                <label for="lazy_loading">Carga diferida de imágenes</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BASE DE DATOS -->
+                <div class="section" id="base-datos">
+                    <div class="section-header">
+                        <i data-lucide="database" style="color: #1a1a1a;"></i>
+                        <h2>Configuración de Base de Datos</h2>
+                    </div>
+
+                    <div class="warning-box">
+                        <h5>⚠️ Configuración Crítica</h5>
+                        <p>Los cambios en esta sección pueden afectar el funcionamiento del sistema. Proceda con precaución.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="metric-card">
+                            <h3>98.7%</h3>
+                            <p>Disponibilidad BD</p>
+                        </div>
+                        <div class="metric-card">
+                            <h3>2.3GB</h3>
+                            <p>Tamaño actual</p>
+                        </div>
+                        <div class="metric-card">
+                            <h3>45ms</h3>
+                            <p>Latencia promedio</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h4><i data-lucide="server"></i>Conexión a la Base de Datos</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Servidor</label>
+                                <input type="text" value="localhost" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label>Puerto</label>
+                                <input type="number" value="3306" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label>Base de datos</label>
+                                <input type="text" value="smartfree_erp" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label>Usuario</label>
+                                <input type="text" value="smartfree_user" readonly>
+                            </div>
+                        </div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="connection_pool" checked>
+                                <label for="connection_pool">Pool de conexiones</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ssl_connection" checked>
+                                <label for="ssl_connection">Conexión SSL</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h4><i data-lucide="hard-drive"></i>Optimización y Mantenimiento</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Limpieza automática de logs (días)</label>
+                                <input type="number" value="30" min="7" max="365">
+                            </div>
+                            <div class="form-field">
+                                <label>Optimización de tablas</label>
+                                <select>
+                                    <option value="weekly" selected>Semanal</option>
+                                    <option value="monthly">Mensual</option>
+                                    <option value="manual">Manual</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Tamaño máximo de BD (GB)</label>
+                                <input type="number" value="10" min="1" max="100">
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn">
+                                <i data-lucide="play"></i>
+                                Optimizar Ahora
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i data-lucide="activity"></i>
+                                Ver Estadísticas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTIFICACIONES -->
+                <div class="section" id="notificaciones">
+                    <div class="section-header">
+                        <i data-lucide="bell" style="color: #1a1a1a;"></i>
+                        <h2>Sistema de Notificaciones</h2>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Centro de Notificaciones</h5>
+                        <p>Configura cómo y cuándo el sistema enviará notificaciones a los usuarios.</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <h4><i data-lucide="mail"></i>Configuración de Email</h4>
+                            <div class="form-field">
+                                <label>Servidor SMTP</label>
+                                <input type="text" value="smtp.gmail.com">
+                            </div>
+                            <div class="form-field">
+                                <label>Puerto</label>
+                                <select>
+                                    <option value="587" selected>587 (TLS)</option>
+                                    <option value="465">465 (SSL)</option>
+                                    <option value="25">25 (Sin encriptación)</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Email remitente</label>
+                                <input type="email" value="sistema@smartfree.com">
+                            </div>
+                            <div class="form-field">
+                                <label>Nombre remitente</label>
+                                <input type="text" value="SmartFree ERP">
+                            </div>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="email_enabled" checked>
+                                    <label for="email_enabled">Habilitar notificaciones por email</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="email_ssl" checked>
+                                    <label for="email_ssl">Usar encriptación SSL/TLS</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <h4><i data-lucide="smartphone"></i>Notificaciones Push</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="push_enabled" checked>
+                                    <label for="push_enabled">Habilitar notificaciones push</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="push_inventory" checked>
+                                    <label for="push_inventory">Alertas de inventario bajo</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="push_sales" checked>
+                                    <label for="push_sales">Nuevas ventas</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="push_projects">
+                                    <label for="push_projects">Actualizaciones de proyectos</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="responsive-table">
+                        <h4 style="margin-bottom: 15px;">Tipos de Notificaciones</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Email</th>
+                                    <th>Push</th>
+                                    <th>Sistema</th>
+                                    <th>Frecuencia</th>
+                                    <th>Destinatarios</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Inventario Bajo</td>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <div class="slider"></div>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <div class="slider"></div>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <div class="slider"></div>
+                                        </label>
+                                    </td>
+                                    <td>Inmediata</td>
+                                    <td>Admin, Manolo</td>
+                                </tr>
+                                <tr>
+                                    <td>Nueva Venta</td>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox">
+                                            <div class="slider"></div>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <div class="slider"></div>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <div class="slider"></div>
+                                        </label>
+                                    </td>
+                                    <td>Inmediata</td>
+                                    <td>Manolo</td>
+                                </tr>
+                                <tr>
+                                    <td>Proyecto Completado</td>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>

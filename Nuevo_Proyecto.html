@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree - Nuevo Proyecto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 30px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #27ae60;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .menu-item:hover {
+            background: #34495e;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #34495e;
+            color: white;
+            border-right: 3px solid #27ae60;
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 0;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .admin-badge {
+            background: #34495e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 1200px;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .form-title {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-control.select {
+            cursor: pointer;
+        }
+
+        .instaladores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .instalador-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #ecf0f1;
+            transition: all 0.3s;
+        }
+
+        .instalador-item:has(input:checked) {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+
+        .instalador-item input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: #27ae60;
+        }
+
+        .material-list {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            min-height: 120px;
+            padding: 15px;
+        }
+
+        .material-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .material-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn-add-material {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-remove {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 300px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            font-size: 16px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #ecf0f1;
+        }
+
+        .btn-primary {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #229954;
+        }
+
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .priority-badges {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .priority-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .priority-badge.alta {
+            background: #fee;
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .priority-badge.media {
+            background: #fff5e6;
+            color: #f39c12;
+            border-color: #f39c12;
+        }
+
+        .priority-badge.baja {
+            background: #e8f5e8;
+            color: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .priority-badge.selected {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .datetime-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <span style="font-weight: 600; font-size: 18px;">SmartFree</span>
+            </div>
+            
+            <a href="#" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-boxes"></i>
+                Inventario
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cash-register"></i>
+                Punto de Venta
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cogs"></i>
+                Operaciones
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-truck"></i>
+                Distribuidores
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                Reportes
+            </a>
+            <a href="#" class="menu-item active">
+                <i class="fas fa-project-diagram"></i>
+                Proyectos
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-users"></i>
+                Usuarios
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cog"></i>
+                Configuración
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1>Nuevo Proyecto/Instalación</h1>
+                <span class="admin-badge">Administrador</span>
+            </header>
+
+            <div class="content">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2 class="form-title">Crear Nueva Instalación</h2>
+                        <a href="#" class="btn-cancel">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                    </div>
+
+                    <form id="proyectoForm">
+                        <div class="form-grid">
+                            <!-- Información General -->
+                            <div class="form-section">
+                                <h3><i class="fas fa-info-circle"></i> Información General</h3>
+                                
+                                <div class="form-group">
+                                    <label for="nombreProyecto">Nombre del Proyecto</label>
+                                    <input type="text" id="nombreProyecto" class="form-control" placeholder="Ej: Instalación Residencial - Casa López" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tipoProyecto">Tipo de Proyecto</label>
+                                    <select id="tipoProyecto" class="form-control select" required>
+                                        <option value="">Seleccionar tipo</option>
+                                        <option value="residencial">Instalación Residencial</option>
+                                        <option value="comercial">Instalación Comercial</option>
+                                        <option value="industrial">Instalación Industrial</option>
+                                        <option value="deportivo">Campo Deportivo</option>
+                                        <option value="corporativo">Jardín Corporativo</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cliente">Cliente</label>
+                                    <input type="text" id="cliente" class="form-control" placeholder="Nombre del cliente" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Prioridad</label>
+                                    <div class="priority-badges">
+                                        <div class="priority-badge alta" onclick="selectPriority('alta')">Alta</div>
+                                        <div class="priority-badge media selected" onclick="selectPriority('media')">Media</div>
+                                        <div class="priority-badge baja" onclick="selectPriority('baja')">Baja</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Programación -->
+                            <div class="form-section">
+                                <h3><i class="fas fa-clock"></i> Programación</h3>
+                                
+                                <div class="datetime-grid">
+                                    <div class="form-group">
+                                        <label for="fechaInstalacion">Fecha de Instalación</label>
+                                        <input type="date" id="fechaInstalacion" class="form-control" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="horaInstalacion">Hora de Instalación</label>
+                                        <input type="time" id="horaInstalacion" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="duracionEstimada">Duración Estimada (horas)</label>
+                                    <input type="number" id="duracionEstimada" class="form-control" placeholder="Ej: 4" min="1" max="24">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="contacto">Persona de Contacto</label>
+                                    <input type="text" id="contacto" class="form-control" placeholder="Con quien se deben presentar">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="telefono">Teléfono de Contacto</label>
+                                    <input type="tel" id="telefono" class="form-control" placeholder="Número de teléfono">
+                                </div>
+                            </div>
+
+                            <!-- Asignación de Instaladores -->
+                            <div class="form-section">
+                                <h3><i class="fas fa-users"></i> Asignación de Instaladores</h3>
+                                
+                                <div class="instaladores-grid">
+                                    <div class="instalador-item">
+                                        <input type="checkbox" id="carlos" name="instaladores" value="Carlos Mendoza">
+                                        <label for="carlos">Carlos Mendoza</label>
+                                    </div>
+                                    <div class="instalador-item">
+                                        <input type="checkbox" id="miguel" name="instaladores" value="Miguel García">
+                                        <label for="miguel">Miguel García</label>
+                                    </div>
+                                    <div class="instalador-item">
+                                        <input type="checkbox" id="juan" name="instaladores" value="Juan Pérez">
+                                        <label for="juan">Juan Pérez</label>
+                                    </div>
+                                    <div class="instalador-item">
+                                        <input type="checkbox" id="ana" name="instaladores" value="Ana Martínez">
+                                        <label for="ana">Ana Martínez</label>
+                                    </div>
+                                    <div class="instalador-item">
+                                        <input type="checkbox" id="luis" name="instaladores" value="Luis González">
+                                        <label for="luis">Luis González</label>
+                                    </div>
+                                    <div class="instalador-item">
+                                        <input type="checkbox" id="sofia" name="instaladores" value="Sofía Rodriguez">
+                                        <label for="sofia">Sofía Rodriguez</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Material Sugerido -->
+                            <div class="form-section">
+                                <h3><i class="fas fa-toolbox"></i> Material Sugerido</h3>
+                                
+                                <div class="material-list" id="materialList">
+                                    <div class="material-item">
+                                        <span>Pasto Premium 50m²</span>
+                                        <button type="button" class="btn-remove" onclick="removeMaterial(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="material-item">
+                                        <span>Sistema de Riego (15 aspersores)</span>
+                                        <button type="button" class="btn-remove" onclick="removeMaterial(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="material-item">
+                                        <span>Fertilizante orgánico (2 sacos)</span>
+                                        <button type="button" class="btn-remove" onclick="removeMaterial(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" class="btn-add-material" onclick="addMaterial()">
+                                    <i class="fas fa-plus"></i> Agregar Material
+                                </button>
+                            </div>
+
+                            <!-- Ubicación -->
+                            <div class="form-section full-width">
+                                <h3><i class="fas fa-map-marker-alt"></i> Ubicación de la Instalación</h3>
+                                
+                                <div class="form-group">
+                                    <label for="direccion">Dirección Completa</label>
+                                    <textarea id="direccion" class="form-control" rows="3" placeholder="Dirección completa de la instalación"></textarea>
+                                </div>
+
+                                <div class="map-container">
+                                    <i class="fas fa-map"></i>
+                                    <span style="margin-left: 10px;">Mapa interactivo - Haz clic para establecer ubicación</span>
+                                </div>
+                            </div>
+
+                            <!-- Notas Adicionales -->
+                            <div class="form-section full-width">
+                                <h3><i class="fas fa-sticky-note"></i> Notas e Instrucciones Especiales</h3>
+                                
+                                <div class="form-group">
+                                    <label for="notas">Instrucciones para los Instaladores</label>
+                                    <textarea id="notas" class="form-control" rows="4" placeholder="Instrucciones especiales, accesos, restricciones, etc."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <div>
+                                <button type="button" class="btn-secondary">
+                                    <i class="fas fa-save"></i> Guardar Borrador
+                                </button>
+                                <button type="button" class="btn-secondary">
+                                    <i class="fas fa-eye"></i> Vista Previa
+                                </button>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-plus"></i> Crear Proyecto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let selectedPriority = 'media';
+
+        function selectPriority(priority) {
+            document.querySelectorAll('.priority-badge').forEach(badge => {
+                badge.classList.remove('selected');
+            });
+            
+            document.querySelector(`.priority-badge.${priority}`).classList.add('selected');
+            selectedPriority = priority;
+        }
+
+        function addMaterial() {
+            const materialName = prompt('Ingresa el nombre del material:');
+            if (materialName && materialName.trim()) {
+                const materialList = document.getElementById('materialList');
+                const materialItem = document.createElement('div');
+                materialItem.className = 'material-item';
+                materialItem.innerHTML = `
+                    <span>${materialName.trim()}</span>
+                    <button type="button" class="btn-remove" onclick="removeMaterial(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                materialList.appendChild(materialItem);
+            }
+        }
+
+        function removeMaterial(button) {
+            button.closest('.material-item').remove();
+        }
+
+        // Set default date to today
+        document.getElementById('fechaInstalacion').valueAsDate = new Date();
+        
+        // Set default time to 9:00 AM
+        document.getElementById('horaInstalacion').value = '09:00';
+
+        // Form submission
+        document.getElementById('proyectoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get selected installers
+            const selectedInstallers = [];
+            document.querySelectorAll('input[name="instaladores"]:checked').forEach(checkbox => {
+                selectedInstallers.push(checkbox.value);
+            });
+
+            // Get material list
+            const materials = [];
+            document.querySelectorAll('.material-item span').forEach(span => {
+                materials.push(span.textContent);
+            });
+
+            const formData = {
+                nombre: document.getElementById('nombreProyecto').value,
+                tipo: document.getElementById('tipoProyecto').value,
+                cliente: document.getElementById('cliente').value,
+                prioridad: selectedPriority,
+                fecha: document.getElementById('fechaInstalacion').value,
+                hora: document.getElementById('horaInstalacion').value,
+                duracion: document.getElementById('duracionEstimada').value,
+                contacto: document.getElementById('contacto').value,
+                telefono: document.getElementById('telefono').value,
+                instaladores: selectedInstallers,
+                materiales: materials,
+                direccion: document.getElementById('direccion').value,
+                notas: document.getElementById('notas').value
+            };
+
+            console.log('Proyecto creado:', formData);
+            alert('¡Proyecto creado exitosamente!');
+        });
+
+        // Map click simulation
+        document.querySelector('.map-container').addEventListener('click', function() {
+            alert('Funcionalidad de mapa: Aquí se integraría Google Maps o similar para seleccionar la ubicación exacta.');
+        });
+    </script>
+</body>
+</html>

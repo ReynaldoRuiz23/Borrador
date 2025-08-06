@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 30px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #27ae60;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #34495e;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #34495e;
+            color: white;
+            border-right: 3px solid #e74c3c;
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background: #f8f9fa;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-badge {
+            background: #2c3e50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #bdc3c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        /* Metrics Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .metric-card.ganancias::before {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .metric-card.gastos::before {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .metric-card.utilidad::before {
+            background: linear-gradient(90deg, #27ae60, #229954);
+        }
+
+        .metric-card.inventario::before {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .metric-icon.ganancias {
+            background: #fef5e7;
+            color: #f39c12;
+        }
+
+        .metric-icon.gastos {
+            background: #ebf3fd;
+            color: #3498db;
+        }
+
+        .metric-icon.utilidad {
+            background: #eafaf1;
+            color: #27ae60;
+        }
+
+        .metric-icon.inventario {
+            background: #f4ecf7;
+            color: #9b59b6;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Main Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .view-all-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Sales Table */
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .sales-table th {
+            text-align: left;
+            padding: 12px 0;
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 500;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .sales-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+            font-size: 14px;
+        }
+
+        .sales-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .client-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .product-name {
+            color: #7f8c8d;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: #27ae60;
+        }
+
+        .time {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        /* Projects Section */
+        .project-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .project-item:last-child {
+            border-bottom: none;
+        }
+
+        .project-status {
+            width: 4px;
+            height: 40px;
+            border-radius: 2px;
+            margin-right: 15px;
+        }
+
+        .project-status.en-progreso {
+            background: #f39c12;
+        }
+
+        .project-status.pendiente {
+            background: #3498db;
+        }
+
+        .project-status.finalizado {
+            background: #27ae60;
+        }
+
+        .project-info {
+            flex: 1;
+        }
+
+        .project-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .project-installer {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .project-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-nuevo {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Alerts Section */
+        .alerts-section {
+            grid-column: 1 / -1;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .alert-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .alert-stock {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+        }
+
+        .alert-shipping {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .alert-icon {
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .alert-stock .alert-icon {
+            color: #f39c12;
+        }
+
+        .alert-shipping .alert-icon {
+            color: #2196f3;
+        }
+
+        .alert-text {
+            flex: 1;
+        }
+
+        .alert-text strong {
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        /* Hover Effects */
+        .metric-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <span style="font-weight: 600; font-size: 18px;">SmartFree</span>
+            </div>
+            
+            <a href="#" class="menu-item active">
+                <i class="fas fa-fire"></i>
+                Dashboard
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-boxes"></i>
+                Inventario
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cash-register"></i>
+                Punto de Venta
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cogs"></i>
+                Operaciones
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-truck"></i>
+                Distribuidores
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                Reportes
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-users"></i>
+                Usuarios
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-cog"></i>
+                Configuración
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1>Dashboard</h1>
+                <div class="header-right">
+                    <span class="admin-badge">Administrador</span>
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card ganancias">
+                        <div class="metric-icon ganancias">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="metric-value">$125,430</div>
+                        <div class="metric-label">Ganancias del Mes</div>
+                    </div>
+                    
+                    <div class="metric-card gastos">
+                        <div class="metric-icon gastos">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="metric-value">$87,250</div>
+                        <div class="metric-label">Gastos del Mes</div>
+                    </div>
+                    
+                    <div class="metric-card utilidad">
+                        <div class="metric-icon utilidad">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="metric-value">$38,180</div>
+                        <div class="metric-label">Utilidad Neta</div>
+                    </div>
+                    
+                    <div class="metric-card inventario">
+                        <div class="metric-icon inventario">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div class="metric-value">2,450 m²</div>
+                        <div class="metric-label">Inventario Total</div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Sales of Today -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Ventas de Hoy</h3>
+                            <a href="#" class="view-all-link">Ver POS</a>
+                        </div>
+                        
+                        <table class="sales-table">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Producto</th>
+                                    <th>Total</th>
+                                    <th>Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="client-name">Juan Pérez</td>
+                                    <td class="product-name">Pasto Premium 50m²</td>
+                                    <td class="amount">$2,500</td>
+                                    <td class="time">10:30 AM</td>
+                                </tr>
+                                <tr>
+                                    <td class="client-name">María García</td>
+                                    <td class="product-name">Instalación Completa</td>
+                                    <td class="amount">$4,200</td>
+                                    <td class="time">11:45 AM</td>
+                                </tr>
+                                <tr>
+                                    <td class="client-name">Carlos López</td>
+                                    <td class="product-name">Pasto Deportivo 100m²</td>
+                                    <td class="amount">$3,800</td>
+                                    <td class="time">2:15 PM</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Active Projects -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Proyectos Activos</h3>
+                            <button class="btn-nuevo">
+                                <i class="fas fa-plus"></i>
+                                Nuevo
+                            </button>
+                        </div>
+                        
+                        <div class="projects-list">
+                            <div class="project-item">
+                                <div class="project-status en-progreso"></div>
+                                <div class="project-info">
+                                    <div class="project-name">Instalación Residencial - Casa López</div>
+                                    <div class="project-installer">Instalador: Carlos Mendoza</div>
+                                </div>
+                            </div>
+                            
+                            <div class="project-item">
+                                <div class="project-status pendiente"></div>
+                                <div class="project-info">
+                                    <div class="project-name">Campo Deportivo - Escuela Primaria</div>
+                                    <div class="project-installer">Equipo: Miguel & Juan</div>
+                                </div>
+                            </div>
+                            
+                            <div class="project-item">
+                                <div class="project-status finalizado"></div>
+                                <div class="project-info">
+                                    <div class="project-name">Jardín Corporativo - Oficinas ABC</div>
+                                    <div class="project-installer">Instalador: Ana Martínez</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Alerts -->
+                <div class="dashboard-card alerts-section">
+                    <div class="card-header">
+                        <h3 class="card-title">Alertas del Sistema</h3>
+                    </div>
+                    
+                    <div class="alerts-list">
+                        <div class="alert-item alert-stock">
+                            <div class="alert-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="alert-text">
+                                <strong>Stock Bajo:</strong> Clavos galvanizados (150 piezas restantes)
+                            </div>
+                        </div>
+                        
+                        <div class="alert-item alert-shipping">
+                            <div class="alert-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="alert-text">
+                                <strong>Contenedor en Camino:</strong> Llegada estimada: 15 de Agosto
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simulate real-time updates
+        function updateMetrics() {
+            // This would normally fetch real data from your API
+            console.log('Updating metrics...');
+        }
+
+        // Update metrics every 30 seconds
+        setInterval(updateMetrics, 30000);
+
+        // Add click handlers for interactive elements
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const type = this.classList[1]; // ganancias, gastos, etc.
+                console.log(`Opening detailed view for: ${type}`);
+                // Here you would navigate to detailed view
+            });
+        });
+
+        // Handle new project button
+        document.querySelector('.btn-nuevo').addEventListener('click', function() {
+            console.log('Opening new project form...');
+            // This would open the new project form you created earlier
+        });
+
+        // Add hover effects to project items
+        document.querySelectorAll('.project-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const projectName = this.querySelector('.project-name').textContent;
+                console.log(`Opening project: ${projectName}`);
+                // Navigate to project details
+            });
+        });
+
+        // Handle alert clicks
+        document.querySelectorAll('.alert-item').forEach(alert => {
+            alert.addEventListener('click', function() {
+                // Handle alert action
+                if (this.classList.contains('alert-stock')) {
+                    console.log('Opening inventory management...');
+                } else if (this.classList.contains('alert-shipping')) {
+                    console.log('Opening shipping tracking...');
+                }
+            });
+        });
+
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.metric-card, .dashboard-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

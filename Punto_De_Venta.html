@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree ERP - Punto de Venta</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            height: calc(100vh - 160px);
+        }
+        
+        .products-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .product-card {
+            background: #f8f9fa;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .product-card:hover {
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 120px;
+            background: #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .product-stock {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .cart-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 160px);
+        }
+        
+        .cart-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .item-price {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .qty-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .qty-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px;
+        }
+        
+        .item-total {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .cart-summary {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: 700;
+            border-top: 2px solid #1a1a1a;
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+        
+        .payment-section {
+            margin-top: 20px;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .payment-btn {
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .payment-btn.active {
+            border-color: #1a1a1a;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .payment-btn:hover {
+            border-color: #1a1a1a;
+        }
+        
+        .customer-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .customer-input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .modal h3 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+        }
+        
+        .alert {
+            background: #dc3545;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .stock-low {
+            border-color: #ffc107 !important;
+            background: #fff3cd;
+        }
+        
+        .stock-out {
+            border-color: #dc3545 !important;
+            background: #f8d7da;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 SmartFree ERP - Punto de Venta</h1>
+            <p>Sistema de ventas integrado con control de inventario y ganancias</p>
+        </div>
+        
+        <div class="main-grid">
+            <!-- SECCIÓN DE PRODUCTOS -->
+            <div class="products-section">
+                <input type="text" class="search-bar" placeholder="🔍 Buscar productos..." id="searchInput">
+                
+                <div class="products-grid" id="productsGrid">
+                    <!-- Los productos se cargarán dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- SECCIÓN DEL CARRITO -->
+            <div class="cart-section">
+                <div class="cart-header">
+                    🛒 Carrito de Compras
+                </div>
+                
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-cart">
+                        <p>El carrito está vacío</p>
+                        <small>Selecciona productos para agregar</small>
+                    </div>
+                </div>
+                
+                <div class="cart-summary" id="cartSummary" style="display: none;">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>IVA (16%):</span>
+                        <span id="tax">$0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                </div>
+                
+                <div class="payment-section" id="paymentSection" style="display: none;">
+                    <input type="text" class="customer-input" placeholder="Nombre del cliente (opcional)" id="customerName">
+                    
+                    <div class="payment-methods">
+                        <div class="payment-btn active" data-method="efectivo">
+                            💵 Efectivo
+                        </div>
+                        <div class="payment-btn" data-method="tarjeta">
+                            💳 Tarjeta
+                        </div>
+                        <div class="payment-btn" data-method="transferencia">
+                            🏦 Transferencia
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="generateQuote()">📄 Cotización</button>
+                        <button class="btn btn-primary" onclick="processSale()">✅ Procesar Venta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div class="modal" id="saleModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSaleModal()">&times;</span>
+            <h3>✅ Venta Procesada</h3>
+            <p>La venta ha sido registrada exitosamente</p>
+            <div id="saleDetails"></div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="downloadReceipt()">📄 Descargar Ticket PDF</button>
+                <button class="btn btn-secondary" onclick="newSale()">🆕 Nueva Venta</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DATOS DE EJEMPLO
+        const products = [
+            { id: 1, name: 'Pasto Sintético Premium 2m²', price: 850, stock: 45, category: 'pasto', image: 'pasto-premium.jpg' },
+            { id: 2, name: 'Pasto Sintético Estándar 2m²', price: 650, stock: 8, category: 'pasto', image: 'pasto-standard.jpg' },
+            { id: 3, name: 'Adhesivo Especial 1L', price: 120, stock: 2, category: 'adhesivos', image: 'adhesivo.jpg' },
+            { id: 4, name: 'Clavos Galvanizados (100 pzas)', price: 85, stock: 25, category: 'herramientas', image: 'clavos.jpg' },
+            { id: 5, name: 'Tijeras Profesionales', price: 280, stock: 15, category: 'herramientas', image: 'tijeras.jpg' },
+            { id: 6, name: 'Pasto Sintético Deluxe 2m²', price: 1200, stock: 0, category: 'pasto', image: 'pasto-deluxe.jpg' },
+            { id: 7, name: 'Base Preparatoria 20kg', price: 95, stock: 30, category: 'preparacion', image: 'base.jpg' },
+            { id: 8, name: 'Kit de Instalación Completo', price: 450, stock: 12, category: 'kits', image: 'kit.jpg' }
+        ];
+        
+        let cart = [];
+        let currentPaymentMethod = 'efectivo';
+        let lastSale = null;
+        
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            setupEventListeners();
+        });
+        
+        function loadProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            
+            products.forEach(product => {
+                const card = createProductCard(product);
+                grid.appendChild(card);
+            });
+        }
+        
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            
+            if (product.stock <= 5 && product.stock > 0) {
+                card.classList.add('stock-low');
+            } else if (product.stock === 0) {
+                card.classList.add('stock-out');
+            }
+            
+            card.innerHTML = `
+                <div class="product-image">
+                    📦 ${product.category}
+                </div>
+                <div class="product-name">${product.name}</div>
+                <div class="product-price">$${product.price.toFixed(2)}</div>
+                <div class="product-stock">Stock: ${product.stock} unidades</div>
+            `;
+            
+            if (product.stock > 0) {
+                card.addEventListener('click', () => addToCart(product));
+            }
+            
+            return card;
+        }
+        
+        function addToCart(product) {
+            if (product.stock <= 0) return;
+            
+            const existingItem = cart.find(item => item.id === product.id);
+            
+            if (existingItem) {
+                if (existingItem.quantity < product.stock) {
+                    existingItem.quantity++;
+                    existingItem.total = existingItem.quantity * existingItem.price;
+                }
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    total: product.price,
+                    stock: product.stock
+                });
+            }
+            
+            updateCartDisplay();
+        }
+        
+        function updateCartDisplay() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            const cartSummary = document.getElementById('cartSummary');
+            const paymentSection = document.getElementById('paymentSection');
+            
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = `
+                    <div class="empty-cart">
+                        <p>El carrito está vacío</p>
+                        <small>Selecciona productos para agregar</small>
+                    </div>
+                `;
+                cartSummary.style.display = 'none';
+                paymentSection.style.display = 'none';
+                return;
+            }
+            
+            cartItemsDiv.innerHTML = '';
+            
+            cart.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">$${item.price.toFixed(2)} c/u</div>
+                        <div class="quantity-controls">
+                            <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                            <input type="number" class="qty-input" value="${item.quantity}" onchange="setQuantity(${item.id}, this.value)" min="1" max="${item.stock}">
+                            <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                            <button class="remove-btn" onclick="removeFromCart(${item.id})">🗑️</button>
+                        </div>
+                        <div class="item-total">Total: $${item.total.toFixed(2)}</div>
+                    </div>
+                `;
+                cartItemsDiv.appendChild(itemDiv);
+            });
+            
+            updateSummary();
+            cartSummary.style.display = 'block';
+            paymentSection.style.display = 'block';
+        }
+        
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+            
+            const newQuantity = item.quantity + change;
+            
+            if (newQuantity <= 0) {
+                removeFromCart(productId);
+                return;
+            }
+            
+            if (newQuantity <= item.stock) {
+                item.quantity = newQuantity;
+                item.total = item.quantity * item.price;
+                updateCartDisplay();
+            }
+        }
+        
+        function setQuantity(productId, quantity) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+            
+            const qty = parseInt(quantity);
+            if (qty <= 0) {
+                removeFromCart(productId);
+                return;
+            }
+            
+            if (qty <= item.stock) {
+                item.quantity = qty;
+                item.total = item.quantity * item.price;
+                updateCartDisplay();
+            }
+        }
+        
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartDisplay();
+        }
+        
+        function updateSummary() {
+            const subtotal = cart.reduce((sum, item) => sum + item.total, 0);
+            const tax = subtotal * 0.16;
+            const total = subtotal + tax;
+            
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+        
+        function setupEventListeners() {
+            // Búsqueda de productos
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const search = e.target.value.toLowerCase();
+                const filtered = products.filter(product => 
+                    product.name.toLowerCase().includes(search) ||
+                    product.category.toLowerCase().includes(search)
+                );
+                
+                const grid = document.getElementById('productsGrid');
+                grid.innerHTML = '';
+                filtered.forEach(product => {
+                    const card = createProductCard(product);
+                    grid.appendChild(card);
+                });
+            });
+            
+            // Métodos de pago
+            document.querySelectorAll('.payment-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentPaymentMethod = this.dataset.method;
+                });
+            });
+        }
+        
+        function generateQuote() {
+            if (cart.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+            
+            const subtotal = cart.reduce((sum, item) => sum + item.total, 0);
+            const tax = subtotal * 0.16;
+            const total = subtotal + tax;
+            const customerName = document.getElementById('customerName').value || 'Cliente';
+            
+            // Aquí se generaría la cotización PDF
+            alert(`Cotización generada para ${customerName}\nTotal: $${total.toFixed(2)}`);
+        }
+        
+        function processSale() {
+            if (cart.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+            
+            // Validar stock disponible
+            for (let item of cart) {
+                const product = products.find(p => p.id === item.id);
+                if (product.stock < item.quantity) {
+                    alert(`Stock insuficiente para ${item.name}. Disponible: ${product.stock}`);
+                    return;
+                }
+            }
+            
+            const subtotal = cart.reduce((sum, item) => sum + item.total, 0);
+            const tax = subtotal * 0.16;
+            const total = subtotal + tax;
+            const customerName = document.getElementById('customerName').value || 'Cliente';
+            
+            // Simular procesamiento de venta
+            const saleId = 'POS-' + Date.now();
+            const saleDate = new Date().toLocaleString('es-MX');
+            
+            // Actualizar inventario
+            cart.forEach(cartItem => {
+                const product = products.find(p => p.id === cartItem.id);
+                product.stock -= cartItem.quantity;
+            });
+            
+            // Guardar datos de la venta
+            lastSale = {
+                id: saleId,
+                date: saleDate,
+                customer: customerName,
+                items: [...cart],
+                subtotal: subtotal,
+                tax: tax,
+                total: total,
+                paymentMethod: currentPaymentMethod,
+                channel: 'Punto de Venta'
+            };
+            
+            // Mostrar modal de confirmación
+            showSaleModal();
+            
+            // Recargar productos para actualizar stock
+            loadProducts();
+        }
+        
+        function showSaleModal() {
+            const modal = document.getElementById('saleModal');
+            const details = document.getElementById('saleDetails');
+            
+            details.innerHTML = `
+                <p><strong>Folio:</strong> ${lastSale.id}</p>
+                <p><strong>Cliente:</strong> ${lastSale.customer}</p>
+                <p><strong>Método de pago:</strong> ${lastSale.paymentMethod}</p>
+                <p><strong>Total:</strong> $${lastSale.total.toFixed(2)}</p>
+            `;
+            
+            modal.style.display = 'block';
+        }
+        
+        function closeSaleModal() {
+            document.getElementById('saleModal').style.display = 'none';
+        }
+        
+        function downloadReceipt() {
+            if (!lastSale) return;
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Configurar el PDF
+            doc.setFontSize(20);
+            doc.text('SmartFree ERP', 20, 20);
+            doc.setFontSize(16);
+            doc.text('Ticket de Venta', 20, 30);
+            
+            doc.setFontSize(12);
+            doc.text(`Folio: ${lastSale.id}`, 20, 45);
+            doc.text(`Fecha: ${lastSale.date}`, 20, 52);
+            doc.text(`Cliente: ${lastSale.customer}`, 20, 59);
+            doc.text(`Método de pago: ${lastSale.paymentMethod}`, 20, 66);
+            
+            doc.text('Productos:', 20, 80);
+            
+            let yPosition = 90;
+            lastSale.items.forEach(item => {
+                doc.text(`${item.name}`, 20, yPosition);
+                doc.text(`${item.quantity} x $${item.price.toFixed(2)} = $${item.total.toFixed(2)}`, 20, yPosition + 7);
+                yPosition += 20;
+            });
+            
+            yPosition += 10;
+            doc.text(`Subtotal: $${lastSale.subtotal.toFixed(2)}`, 20, yPosition);
+            doc.text(`IVA: $${lastSale.tax.toFixed(2)}`, 20, yPosition + 10);
+            doc.setFontSize(14);
+            doc.text(`Total: $${lastSale.total.toFixed(2)}`, 20, yPosition + 25);
+            
+            doc.save(`ticket-${lastSale.id}.pdf`);
+        }
+        
+        function newSale() {
+            cart = [];
+            currentPaymentMethod = 'efectivo';
+            document.getElementById('customerName').value = '';
+            document.querySelectorAll('.payment-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('[data-method="efectivo"]').classList.add('active');
+            updateCartDisplay();
+            closeSaleModal();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree ERP - Configuración de Reportes</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        .sidebar-menu i {
+            width: 18px;
+            height: 18px;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: #1a1a1a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-group h4 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-field {
+            margin-bottom: 15px;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-field input, .form-field select, .form-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+            outline: none;
+            border-color: #1a1a1a;
+            box-shadow: 0 0 0 3px rgba(26,26,26,0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background-color: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #333;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h5 {
+            color: #1565c0;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .info-box p {
+            color: #1976d2;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li i {
+            color: #28a745;
+            width: 16px;
+            height: 16px;
+        }
+
+        .preview-section {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-section h5 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .report-preview {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .responsive-table {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Configuración de Reportes</h1>
+            <p>Configura y personaliza todos los reportes del sistema SmartFree ERP</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="sidebar">
+                <h3>Configuraciones</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active" data-section="formatos"><i data-lucide="file-text"></i>Formatos de Reporte</a></li>
+                    <li><a href="#" data-section="automaticos"><i data-lucide="clock"></i>Reportes Automáticos</a></li>
+                    <li><a href="#" data-section="personalizados"><i data-lucide="settings"></i>Reportes Personalizados</a></li>
+                    <li><a href="#" data-section="distribucion"><i data-lucide="mail"></i>Distribución</a></li>
+                    <li><a href="#" data-section="plantillas"><i data-lucide="layout-template"></i>Plantillas</a></li>
+                    <li><a href="#" data-section="permisos"><i data-lucide="shield"></i>Permisos</a></li>
+                </ul>
+            </div>
+
+            <div class="content">
+                <!-- FORMATOS DE REPORTE -->
+                <div class="section active" id="formatos">
+                    <div class="section-header">
+                        <i data-lucide="file-text" style="color: #1a1a1a;"></i>
+                        <h2>Formatos de Reporte</h2>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Configuración de Formatos</h5>
+                        <p>Define cómo se generarán y presentarán los reportes en diferentes formatos (PDF, Excel, CSV).</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <h4><i data-lucide="file-type"></i>Configuración PDF</h4>
+                            <div class="form-field">
+                                <label>Orientación por defecto</label>
+                                <select>
+                                    <option value="portrait">Vertical (Portrait)</option>
+                                    <option value="landscape">Horizontal (Landscape)</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Tamaño de página</label>
+                                <select>
+                                    <option value="A4">A4</option>
+                                    <option value="Letter">Carta</option>
+                                    <option value="Legal">Legal</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Márgenes (mm)</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <input type="number" placeholder="Superior" value="20">
+                                    <input type="number" placeholder="Inferior" value="20">
+                                    <input type="number" placeholder="Izquierdo" value="15">
+                                    <input type="number" placeholder="Derecho" value="15">
+                                </div>
+                            </div>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="pdf_header" checked>
+                                    <label for="pdf_header">Incluir encabezado</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="pdf_footer" checked>
+                                    <label for="pdf_footer">Incluir pie de página</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="pdf_logo" checked>
+                                    <label for="pdf_logo">Incluir logo empresa</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="pdf_watermark">
+                                    <label for="pdf_watermark">Marca de agua</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <h4><i data-lucide="table"></i>Configuración Excel</h4>
+                            <div class="form-field">
+                                <label>Formato por defecto</label>
+                                <select>
+                                    <option value="xlsx">Excel (.xlsx)</option>
+                                    <option value="xls">Excel 97-2003 (.xls)</option>
+                                    <option value="csv">CSV (.csv)</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Separador CSV</label>
+                                <select>
+                                    <option value=",">, (Coma)</option>
+                                    <option value=";">; (Punto y coma)</option>
+                                    <option value="|">| (Barra vertical)</option>
+                                </select>
+                            </div>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="excel_formulas" checked>
+                                    <label for="excel_formulas">Incluir fórmulas</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="excel_charts">
+                                    <label for="excel_charts">Incluir gráficos</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="excel_filters" checked>
+                                    <label for="excel_filters">Filtros automáticos</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="excel_format" checked>
+                                    <label for="excel_format">Formato de celdas</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h4><i data-lucide="palette"></i>Configuración Visual</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Esquema de colores</label>
+                                <select>
+                                    <option value="default">Por defecto (Negro/Blanco/Gris)</option>
+                                    <option value="corporate">Corporativo</option>
+                                    <option value="minimal">Minimalista</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Fuente por defecto</label>
+                                <select>
+                                    <option value="arial">Arial</option>
+                                    <option value="helvetica">Helvetica</option>
+                                    <option value="times">Times New Roman</option>
+                                    <option value="roboto">Roboto</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Tamaño de fuente</label>
+                                <input type="number" value="10" min="8" max="16">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REPORTES AUTOMÁTICOS -->
+                <div class="section" id="automaticos">
+                    <div class="section-header">
+                        <i data-lucide="clock" style="color: #1a1a1a;"></i>
+                        <h2>Reportes Automáticos</h2>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Automatización de Reportes</h5>
+                        <p>Configura la generación automática de reportes periódicos y las condiciones para su envío.</p>
+                    </div>
+
+                    <div class="responsive-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Reporte</th>
+                                    <th>Frecuencia</th>
+                                    <th>Hora</th>
+                                    <th>Estado</th>
+                                    <th>Destinatarios</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ventas Diarias</td>
+                                    <td>
+                                        <select style="width: 120px;">
+                                            <option value="daily" selected>Diario</option>
+                                            <option value="weekly">Semanal</option>
+                                            <option value="monthly">Mensual</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="time" value="08:00" style="width: 100px;"></td>
+                                    <td>
+                                        <label style="display: flex; align-items: center; gap: 5px;">
+                                            <input type="checkbox" checked>
+                                            Activo
+                                        </label>
+                                    </td>
+                                    <td>manolo@smartfree.com</td>
+                                    <td>
+                                        <button class="btn" style="padding: 6px 12px; font-size: 12px;">
+                                            <i data-lucide="edit" style="width: 14px; height: 14px;"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Inventario Semanal</td>
+                                    <td>
+                                        <select style="width: 120px;">
+                                            <option value="daily">Diario</option>
+                                            <option value="weekly" selected>Semanal</option>
+                                            <option value="monthly">Mensual</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="time" value="09:00" style="width: 100px;"></td>
+                                    <td>
+                                        <label style="display: flex; align-items: center; gap: 5px;">
+                                            <input type="checkbox" checked>
+                                            Activo
+                                        </label>
+                                    </td>
+                                    <td>manolo@smartfree.com, admin@smartfree.com</td>
+                                    <td>
+                                        <button class="btn" style="padding: 6px 12px; font-size: 12px;">
+                                            <i data-lucide="edit" style="width: 14px; height: 14px;"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>P&L Mensual</td>
+                                    <td>
+                                        <select style="width: 120px;">
+                                            <option value="daily">Diario</option>
+                                            <option value="weekly">Semanal</option>
+                                            <option value="monthly" selected>Mensual</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="time" value="07:00" style="width: 100px;"></td>
+                                    <td>
+                                        <label style="display: flex; align-items: center; gap: 5px;">
+                                            <input type="checkbox" checked>
+                                            Activo
+                                        </label>
+                                    </td>
+                                    <td>manolo@smartfree.com</td>
+                                    <td>
+                                        <button class="btn" style="padding: 6px 12px; font-size: 12px;">
+                                            <i data-lucide="edit" style="width: 14px; height: 14px;"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px;">
+                        <h4><i data-lucide="plus"></i>Crear Nuevo Reporte Automático</h4>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Tipo de reporte</label>
+                                <select>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="ventas">Ventas por canal</option>
+                                    <option value="inventario">Estado de inventario</option>
+                                    <option value="proyectos">Proyectos en curso</option>
+                                    <option value="financiero">Reporte financiero</option>
+                                    <option value="operaciones">Operaciones diarias</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Frecuencia</label>
+                                <select>
+                                    <option value="daily">Diario</option>
+                                    <option value="weekly">Semanal</option>
+                                    <option value="monthly">Mensual</option>
+                                    <option value="quarterly">Trimestral</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Hora de envío</label>
+                                <input type="time" value="08:00">
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label>Destinatarios (separados por coma)</label>
+                            <textarea rows="3" placeholder="manolo@smartfree.com, admin@smartfree.com"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REPORTES PERSONALIZADOS -->
+                <div class="section" id="personalizados">
+                    <div class="section-header">
+                        <i data-lucide="settings" style="color: #1a1a1a;"></i>
+                        <h2>Reportes Personalizados</h2>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Constructor de Reportes</h5>
+                        <p>Crea reportes personalizados seleccionando campos específicos y filtros avanzados.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <h4><i data-lucide="database"></i>Fuentes de Datos</h4>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="data_ventas" checked>
+                                <label for="data_ventas">Ventas (POS + Distribuidores)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="data_inventario" checked>
+                                <label for="data_inventario">Inventario</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="data_proyectos">
+                                <label for="data_proyectos">Proyectos/Operaciones</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="data_clientes">
+                                <label for="data_clientes">Clientes</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="data_proveedores">
+                                <label for="data_proveedores">Proveedores</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="data_gastos">
+                                <label for="data_gastos">Gastos</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <h4><i data-lucide="filter"></i>Campos Disponibles - Ventas</h4>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_fecha">
+                                    <label for="campo_fecha">Fecha</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_cliente">
+                                    <label for="campo_cliente">Cliente</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_producto">
+                                    <label for="campo_producto">Producto</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_cantidad">
+                                    <label for="campo_cantidad">Cantidad</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_precio">
+                                    <label for="campo_precio">Precio</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_total">
+                                    <label for="campo_total">Total</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_canal">
+                                    <label for="campo_canal">Canal</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="campo_vendedor">
+                                    <label for="campo_vendedor">Vendedor</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <h4><i data-lucide="sliders"></i>Filtros Avanzados</h4>
+                            <div class="form-field">
+                                <label>Rango de fechas</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <input type="date">
+                                    <input type="date">
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label>Canal de venta</label>
+                                <select>
+                                    <option value="">Todos</option>
+                                    <option value="pos">Punto de Venta</option>
+                                    <option value="distribuidor">Distribuidores</option>
+                                    <option value="operaciones">Operaciones</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Monto mínimo</label>
+                                <input type="number" placeholder="0.00">
+                            </div>
+                            <div class="form-field">
+                                <label>Agrupar por</label>
+                                <select>
+                                    <option value="">Sin agrupar</option>
+                                    <option value="day">Día</option>
+                                    <option value="week">Semana</option>
+                                    <option value="month">Mes</option>
+                                    <option value="product">Producto</option>
+                                    <option value="client">Cliente</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preview-section">
+                        <h5>Vista previa del reporte</h5>
+                        <div class="report-preview">
+REPORTE PERSONALIZADO - VENTAS POR CANAL
+========================================
+Período: 01/12/2024 - 31/12/2024
+Canal: Todos
+Agrupado por: Mes
+
+RESUMEN:
+--------
+POS:           $125,450.00
+Distribuidores: $89,320.00
+Operaciones:   $45,780.00
+TOTAL:         $260,550.00
+
+DETALLE POR PRODUCTO:
+--------------------
+Pasto Premium 2x25m    45 unidades    $89,450.00
+Pasto Estándar 2x25m   32 unidades    $54,780.00
+Accesorios

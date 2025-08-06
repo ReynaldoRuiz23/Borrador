@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree - Sistema de Gestión</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+            background: #34495e;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            color: white;
+        }
+
+        .nav-menu {
+            padding: 15px 0;
+        }
+
+        .nav-item {
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ecf0f1;
+            font-size: 14px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: #34495e;
+            border-left-color: #95a5a6;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .header h2 {
+            color: #2c3e50;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .btn-nuevo {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-nuevo:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            min-height: 600px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        /* Inventory Grid */
+        .inventory-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .action-card:hover {
+            border-color: #6c757d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .action-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .action-card p {
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #6c757d;
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6268;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background: #dae0e5;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            border: 1px solid #e9ecef;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-header h3 {
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #6c757d;
+            background: none;
+            border: none;
+        }
+
+        .close:hover {
+            color: #495057;
+        }
+
+        /* Hide all sections by default */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .container {
+                flex-direction: column;
+            }
+        }
+
+        /* Search bar */
+        .search-bar {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        /* User role styles */
+        .user-role-selector {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .role-btn {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border: 1px solid #6c757d;
+            background: white;
+            color: #6c757d;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .role-btn.active {
+            background: #6c757d;
+            color: white;
+        }
+
+        /* Point of sale styles */
+        .pos-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            height: 600px;
+        }
+
+        .products-area {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .cart-area {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .product-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            border-color: #6c757d;
+            transform: translateY(-2px);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .cart-total {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: center;
+            margin: 20px 0;
+            padding-top: 15px;
+            border-top: 2px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>SmartFree</h1>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active" data-section="dashboard">
+                    <i>📊</i> Dashboard
+                </div>
+                <div class="nav-item" data-section="inventario">
+                    <i>📦</i> Inventario
+                </div>
+                <div class="nav-item" data-section="punto-venta">
+                    <i>💰</i> Punto de Venta
+                </div>
+                <div class="nav-item" data-section="operaciones">
+                    <i>⚙️</i> Operaciones
+                </div>
+                <div class="nav-item" data-section="distribuidores">
+                    <i>🚚</i> Distribuidores
+                </div>
+                <div class="nav-item" data-section="reportes">
+                    <i>📈</i> Reportes
+                </div>
+                <div class="nav-item" data-section="usuarios">
+                    <i>👥</i> Usuarios
+                </div>
+                <div class="nav-item" data-section="configuracion">
+                    <i>⚙️</i> Configuración
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="header">
+                    <h2>Dashboard</h2>
+                    <button class="btn-nuevo" onclick="showNuevoModal()">+ Nuevo</button>
+                </div>
+                
+                <div class="user-role-selector">
+                    <button class="role-btn active" onclick="setUserRole('admin')">Administrador</button>
+                    <button class="role-btn" onclick="setUserRole('instalador')">Instalador</button>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">150</div>
+                        <div class="stat-label">Productos en Inventario</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">25</div>
+                        <div class="stat-label">Contenedores Activos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$45,230</div>
+                        <div class="stat-label">Ventas del Mes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Distribuidores</div>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">Resumen de Actividades</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Actividad</th>
+                                    <th>Usuario</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>03/08/2025</td>
+                                    <td>Nuevo producto agregado</td>
+                                    <td>Juan Pérez</td>
+                                    <td><span style="color: #28a745;">Completado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>03/08/2025</td>
+                                    <td>Contenedor redistribuido</td>
+                                    <td>María García</td>
+                                    <td><span style="color: #28a745;">Completado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>02/08/2025</td>
+                                    <td>Reporte generado</td>
+                                    <td>Carlos López</td>
+                                    <td><span style="color: #ffc107;">En proceso</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Inventario Section -->
+            <section id="inventario" class="section">
+                <div class="header">
+                    <h2>Inventario</h2>
+                </div>
+                
+                <div class="inventory-actions">
+                    <div class="action-card" onclick="showModal('contenedorModal')">
+                        <h3>Registrar Contenedor</h3>
+                        <p>Agregar nuevos contenedores al sistema para organizar el inventario</p>
+                    </div>
+                    <div class="action-card" onclick="showModal('productoModal')">
+                        <h3>Nuevo Producto</h3>
+                        <p>Registrar nuevos productos en el inventario con toda su información</p>
+                    </div>
+                    <div class="action-card" onclick="showModal('redistribuirModal')">
+                        <h3>Redistribuir Inventario</h3>
+                        <p>Mover productos entre diferentes contenedores o ubicaciones</p>
+                    </div>
+                    <div class="action-card" onclick="exportarDatos()">
+                        <h3>Exportar Datos</h3>
+                        <p>Exportar información del inventario en diferentes formatos</p>
+                    </div>
+                    <div class="action-card" onclick="showModal('reporteInventarioModal')">
+                        <h3>Generar Reportes</h3>
+                        <p>Crear reportes detallados del estado del inventario</p>
+                    </div>
+                </div>
+
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Buscar productos en inventario..." id="searchProducts">
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Stock</th>
+                                <th>Precio</th>
+                                <th>Contenedor</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <tr>
+                                <td>PRD001</td>
+                                <td>Producto Premium A</td>
+                                <td>Electrónicos</td>
+                                <td>50</td>
+                                <td>$250.00</td>
+                                <td>CONT-001</td>
+                                <td><span style="color: #28a745;">Disponible</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('PRD001')">Editar</button>
+                                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="viewProduct('PRD001')">Ver</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PRD002</td>
+                                <td>Producto Básico B</td>
+                                <td>Herramientas</td>
+                                <td>30</td>
+                                <td>$150.00</td>
+                                <td>CONT-002</td>
+                                <td><span style="color: #ffc107;">Stock Bajo</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('PRD002')">Editar</button>
+                                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="viewProduct('PRD002')">Ver</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>PRD003</td>
+                                <td>Producto Especial C</td>
+                                <td>Accesorios</td>
+                                <td>75</td>
+                                <td>$89.99</td>
+                                <td>CONT-001</td>
+                                <td><span style="color: #28a745;">Disponible</span></td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="editProduct('PRD003')">Editar</button>
+                                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="viewProduct('PRD003')">Ver</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Punto de Venta Section -->
+            <section id="punto-venta" class="section">
+                <div class="header">
+                    <h2>Punto de Venta</h2>
+                </div>
+                
+                <div class="pos-grid">
+                    <div class="products-area">
+                        <h3 style="color: #2c3e50; margin-bottom: 15px;">Productos Disponibles</h3>
+                        <div class="search-bar">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" placeholder="Buscar productos..." id="searchPOSProducts">
+                        </div>
+                        <div class="product-grid" id="productGrid">
+                            <div class="product-item" onclick="addToCart('PRD001', 'Producto Premium A', 250)">
+                                <h4>Producto Premium A</h4>
+                                <p style="color: #28a745; font-weight: 600;">$250.00</p>
+                                <p style="color: #6c757d; font-size: 12px;">Stock: 50</p>
+                            </div>
+                            <div class="product-item" onclick="addToCart('PRD002', 'Producto Básico B', 150)">
+                                <h4>Producto Básico B</h4>
+                                <p style="color: #28a745; font-weight: 600;">$150.00</p>
+                                <p style="color: #6c757d; font-size: 12px;">Stock: 30</p>
+                            </div>
+                            <div class="product-item" onclick="addToCart('PRD003', 'Producto Especial C', 89.99)">
+                                <h4>Producto Especial C</h4>
+                                <p style="color: #28a745; font-weight: 600;">$89.99</p>
+                                <p style="color: #6c757d; font-size: 12px;">Stock: 75</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cart-area">
+                        <h3 style="color: #2c3e50; margin-bottom: 15px;">Carrito de Compras</h3>
+                        <div id="cart-items">
+                            <p style="color: #6c757d; text-align: center; margin-top: 40px;">No hay productos en el carrito</p>
+                        </div>
+                        <div class="cart-total">
+                            Total: $<span id="cart-total">0.00</span>
+                        </div>
+                        <button class="btn btn-success" style="width: 100%; margin-top: 15px; padding: 15px;" onclick="processSale()" id="checkout-btn" disabled>Procesar Venta</button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="clearCart()">Limpiar Carrito</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Operaciones Section -->
+            <section id="operaciones" class="section">
+                <div class="header">
+                    <h2>Operaciones</h2>
+                </div>
+                
+                <div class="content-area">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">Resumen de Operaciones del Día</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Tipo de Operación</th>
+                                    <th>Producto/Item</th>
+                                    <th>Cantidad</th>
+                                    <th>Usuario</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>14:30</td>
+                                    <td>Venta</td>
+                                    <td>Producto Premium A</td>
+                                    <td>2</td>
+                                    <td>Juan Pérez</td>
+                                    <td><span style="color: #28a745;">Completada</span></td>
+                                </tr>
+                                <tr>
+                                    <td>13:15</td>
+                                    <td>Redistribución</td>
+                                    <td>Contenedor CONT-001</td>
+                                    <td>15</td>
+                                    <td>María García</td>
+                                    <td><span style="color: #28a745;">Completada</span></td>
+                                </tr>
+                                <tr>
+                                    <td>11:45</td>
+                                    <td>Ingreso</td>
+                                    <td>Producto Especial C</td>
+                                    <td>25</td>
+                                    <td>Carlos López</td>
+                                    <td><span style="color: #ffc107;">En proceso</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Distribuidores Section -->
+            <section id="distribuidores" class="section">
+                <div class="header">
+                    <h2>Distribuidores</h2>
+                    <button class="btn-nuevo" onclick="showModal('nuevoReporteModal')">+ Nuevo Reporte</button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Distribuidor</th>
+                                <th>Región</th>
+                                <th>Productos Asignados</th>
+                                <th>Estado</th>
+                                <th>Último Pedido</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>DIST001</td>
+                                <td>Distribuidor Norte León</td>
+                                <td>Norte</td>
+                                <td>25</td>
+                                <td><span style="color: #28a745;">Activo</span></td>
+                                <td>01/08/2025</td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Ver Detalle</button>
+                                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">Editar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>DIST002</td>
+                                <td>Distribuidor Sur Guanajuato</td>
+                                <td>Sur</td>
+                                <td>18</td>
+                                <td><span style="color: #28a745;">Activo</span></td>
+                                <td>30/07/2025</td>
+                                <td>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Ver Detalle</button>
+                                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">Editar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reportes Section -->
+            <section id="reportes" class="section">
+                <div class="header">
+                    <h2>Reportería</h2>
+                </div>
+                
+                <div class="inventory-actions">
+                    <div class="action-card" onclick="generateReport('ventas')">
+                        <h3>Reporte de Ventas</h3>
+                        <p>Generar reportes detallados de ventas por período, producto y distribuidor</p>
+                    </div>
+                    <div class="action-card" onclick="generateReport('inventario')">
+                        <h3>Reporte de Inventario</h3>
+                        <p>Estado actual del invent

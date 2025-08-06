@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree ERP - Gestión de Precios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: #000;
+            color: white;
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+
+        .logo h2 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 5px 0;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 20px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #333;
+            color: white;
+            border-right: 3px solid #666;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .breadcrumb {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #000;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #000;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #333;
+        }
+
+        .btn-secondary {
+            background-color: #666;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #555;
+        }
+
+        .btn-danger {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #555;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .price-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background-color: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button:hover {
+            background-color: #f8f9fa;
+        }
+
+        .tab-button.active {
+            background-color: #000;
+            color: white;
+            border-bottom-color: #333;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .price-table th,
+        .price-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .price-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .price-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .price-input {
+            width: 100px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: right;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #000;
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #ccc;
+            color: #666;
+        }
+
+        .status-low {
+            background-color: #666;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .alert-success {
+            background-color: #000;
+            color: white;
+            display: none;
+        }
+
+        .price-calculator {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .calc-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .search-filter {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .filter-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        .bulk-actions {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .percentage-badge {
+            background-color: #666;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .profit-margin {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .price-history {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .import-export {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h2>SmartFree</h2>
+            <small>ERP System</small>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">📊 Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">📦 Inventario</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">💰 Punto de Venta</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">🔧 Operaciones</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">🚚 Distribuidores</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">📊 Reportería</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">👥 Usuarios</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">👤 Clientes</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">🏭 Proveedores</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">⚙️ Configuración</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <div class="breadcrumb">
+                    <a href="#">⚙️ Configuración</a> / 💰 Gestión de Precios
+                </div>
+                <h1 class="page-title">💰 Gestión de Precios</h1>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="exportPrices()">📤 Exportar</button>
+                <button class="btn btn-secondary" onclick="importPrices()">📥 Importar</button>
+                <button class="btn btn-primary" onclick="saveAllPrices()">💾 Guardar Cambios</button>
+            </div>
+        </div>
+
+        <div class="alert alert-success" id="successAlert">
+            ✅ Precios actualizados correctamente en todos los canales
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">47</div>
+                <div class="stat-label">Productos Activos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">42%</div>
+                <div class="stat-label">Margen Promedio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">30%</div>
+                <div class="stat-label">Descuento Distribuidores</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">$2,450</div>
+                <div class="stat-label">Precio Promedio</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="price-tabs">
+            <button class="tab-button active" onclick="showTab('productos')">📦 Productos</button>
+            <button class="tab-button" onclick="showTab('canales')">🏪 Precios por Canal</button>
+            <button class="tab-button" onclick="showTab('descuentos')">🎯 Descuentos</button>
+            <button class="tab-button" onclick="showTab('margenes')">📈 Márgenes</button>
+            <button class="tab-button" onclick="showTab('historial')">📋 Historial</button>
+        </div>
+
+        <!-- Tab: Productos -->
+        <div id="productos" class="tab-content active">
+            <!-- Search and Filters -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="search-filter">
+                        <input type="text" class="search-box" placeholder="🔍 Buscar productos..." id="searchProducts">
+                        <select class="filter-select">
+                            <option value="">Todas las categorías</option>
+                            <option value="pasto">🌱 Pasto Sintético</option>
+                            <option value="materiales">🔧 Materiales</option>
+                            <option value="herramientas">📐 Herramientas</option>
+                            <option value="servicios">🚛 Servicios</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">Todos los estados</option>
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                            <option value="low">Stock Bajo</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('productModal')">+ Nuevo Producto</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-actions">
+                <strong>Acciones masivas:</strong>
+                <button class="btn btn-secondary btn-sm" onclick="bulkPriceUpdate()">📊 Actualizar Precios</button>
+                <button class="btn btn-secondary btn-sm" onclick="bulkDiscount()">🎯 Aplicar Descuento</button>
+                <button class="btn btn-secondary btn-sm" onclick="bulkActivate()">✅ Activar Seleccionados</button>
+            </div>
+
+            <!-- Products Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Lista de Productos con Precios</h3>
+                    <div class="alert alert-info" style="margin: 0; padding: 10px; font-size: 12px;">
+                        💡 Los precios se sincronizan automáticamente en POS, Distribuidores y Operaciones
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="price-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" onclick="selectAll()"></th>
+                                <th>Producto</th>
+                                <th>Costo</th>
+                                <th>Precio POS</th>
+                                <th>Margen</th>
+                                <th>Precio Distribuidor</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="product-checkbox"></td>
+                                <td>
+                                    <strong>Pasto Sintético Premium</strong><br>
+                                    <small style="color: #666;">40mm altura - m²</small>
+                                </td>
+                                <td>$280.00</td>
+                                <td>
+                                    <input type="number" class="price-input" value="450" onchange="calculateMargin(this)">
+                                </td>
+                                <td><span class="profit-margin">60.7%</span></td>
+                                <td>
+                                    <input type="number" class="price-input" value="315" readonly>
+                                    <span class="percentage-badge">-30%</span>
+                                </td>
+                                <td>1,250 m²</td>
+                                <td><span class="status-badge status-active">Activo</span></td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProduct(1)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(1)">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="product-checkbox"></td>
+                                <td>
+                                    <strong>Pasto Sintético Estándar</strong><br>
+                                    <small style="color: #666;">25mm altura - m²</small>
+                                </td>
+                                <td>$200.00</td>
+                                <td>
+                                    <input type="number" class="price-input" value="320" onchange="calculateMargin(this)">
+                                </td>
+                                <td><span class="profit-margin">60%</span></td>
+                                <td>
+                                    <input type="number" class="price-input" value="224" readonly>
+                                    <span class="percentage-badge">-30%</span>
+                                </td>
+                                <td>850 m²</td>
+                                <td><span class="status-badge status-active">Activo</span></td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProduct(2)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(2)">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="product-checkbox"></td>
+                                <td>
+                                    <strong>Clavos Galvanizados</strong><br>
+                                    <small style="color: #666;">Para instalación - kg</small>
+                                </td>
+                                <td>$55.00</td>
+                                <td>
+                                    <input type="number" class="price-input" value="85" onchange="calculateMargin(this)">
+                                </td>
+                                <td><span class="profit-margin">54.5%</span></td>
+                                <td>
+                                    <input type="number" class="price-input" value="59.50" readonly>
+                                    <span class="percentage-badge">-30%</span>
+                                </td>
+                                <td>45 kg</td>
+                                <td><span class="status-badge status-low">Stock Bajo</span></td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProduct(3)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(3)">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="product-checkbox"></td>
+                                <td>
+                                    <strong>Resistol Especial</strong><br>
+                                    <small style="color: #666;">Adhesivo profesional - litro</small>
+                                </td>
+                                <td>$75.00</td>
+                                <td>
+                                    <input type="number" class="price-input" value="120" onchange="calculateMargin(this)">
+                                </td>
+                                <td><span class="profit-margin">60%</span></td>
+                                <td>
+                                    <input type="number" class="price-input" value="84" readonly>
+                                    <span class="percentage-badge">-30%</span>
+                                </td>
+                                <td>0 L</td>
+                                <td><span class="status-badge status-inactive">Agotado</span></td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProduct(4)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(4)">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="product-checkbox"></td>
+                                <td>
+                                    <strong>Tijeras Profesionales</strong><br>
+                                    <small style="color: #666;">Para corte de pasto - unidad</small>
+                                </td>
+                                <td>$180.00</td>
+                                <td>
+                                    <input type="number" class="price-input" value="280" onchange="calculateMargin(this)">
+                                </td>
+                                <td><span class="profit-margin">55.6%</span></td>
+                                <td>
+                                    <input type="number" class="price-input" value="196" readonly>
+                                    <span class="percentage-badge">-30%</span>
+                                </td>
+                                <td>12 unidades</td>
+                                <td><span class="status-badge status-active">Activo</span></td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProduct(5)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(5)">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="product-checkbox"></td>
+                                <td>
+                                    <strong>Instalación Profesional</strong><br>
+                                    <small style="color: #666;">Mano de obra - m²</small>
+                                </td>
+                                <td>$35.00</td>
+                                <td>
+                                    <input type="number" class="price-input" value="85" onchange="calculateMargin(this)">
+                                </td>
+                                <td><span class="profit-margin">142.9%</span></td>
+                                <td>
+                                    <input type="number" class="price-input" value="59.50" readonly>
+                                    <span class="percentage-badge">-30%</span>
+                                </td>
+                                <td>∞</td>
+                                <td><span class="status-badge status-active">Activo</span></td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProduct(6)">✏️</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(6)">🗑️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Precios por Canal -->
+        <div id="canales" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Configuración de Precios por Canal de Venta</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>ℹ️ Información:</strong> Los precios base se establecen para POS. Los demás canales calculan automáticamente según los descuentos configurados.
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="card" style="margin: 0;">
+                            <div class="card-header">
+                                <h4>💰 Punto de Venta (POS)</h4>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Precio Base:</strong> 100% del precio configurado</p>
+                                <p><strong>Clientes:</strong> Público general</p>
+                                <p><strong>Descuentos:</strong> Solo promociones especiales</p>
+                                <div class="form-group">
+                                    <label class="form-label">Descuento Máximo Permitido (%)</label>
+                                    <input type="number" class="form-control" value="15" min="0" max="50">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin: 0;">
+                            <div class="card-header">
+                                <h4>🚚 Distribuidores</h4>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Descuento Fijo:</strong> 30% sobre precio POS</p>
+                                <p><strong>Clientes:</strong> Distribuidores registrados</p>
+                                <div class="form-group">
+                                    <label class="form-label">Descuento Distribuidores (%)</label>
+                                    <input type="number" class="form-control" value="30" min="0" max="50">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Descuento por Volumen (+500 m²) (%)</label>
+                                    <input type="number" class="form-control" value="5" min="0" max="15">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin: 0;">
+                            <div class="card-header">
+                                <h4>🔧 Operaciones</h4>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Precio:</strong> Costo + mano de obra</p>
+                                <p><strong>Uso:</strong> Consumo interno para instalaciones</p>
+                                <div class="form-group">
+                                    <label class="form-label">Margen Mano de Obra (%)</label>
+                                    <input type="number" class="form-control" value="120" min="50" max="200">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Costo Promedio Instalación/m²</label>
+                                    <input type="number" class="form-control" value="35" min="20" max="80">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Descuentos -->
+        <div id="descuentos" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Configuración de Descuentos</h3>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('discountModal')">+ Nuevo Descuento</button>
+                </div>
+                <div class="card-body">
+                    <table class="price-table">

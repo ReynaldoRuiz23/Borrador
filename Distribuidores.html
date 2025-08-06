@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree ERP - Distribuidores</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+        
+        .left-panel {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+        }
+        
+        .distributors-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .add-distributor-btn {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .add-distributor-btn:hover {
+            background: #333;
+            transform: translateY(-1px);
+        }
+        
+        .distributors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .distributor-card {
+            background: #f8f9fa;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .distributor-card:hover {
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .distributor-card.selected {
+            border-color: #1a1a1a;
+            background: #f0f0f0;
+        }
+        
+        .distributor-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .distributor-info {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .distributor-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+        }
+        
+        .products-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+        
+        .search-filters {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar {
+            padding: 12px 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .bulk-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bulk-btn:hover {
+            background: #5a6268;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+        }
+        
+        .product-card {
+            background: #f8f9fa;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100px;
+            background: #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .product-prices {
+            margin-bottom: 8px;
+        }
+        
+        .price-regular {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .price-distributor {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .price-savings {
+            background: #d4edda;
+            color: #155724;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+        
+        .product-stock {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .minimum-order {
+            font-size: 11px;
+            color: #007bff;
+            font-weight: 600;
+            background: #e7f3ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .order-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 200px);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .distributor-info-panel {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .distributor-name-large {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .distributor-type {
+            background: #1a1a1a;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .order-items {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .item-details {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .qty-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .qty-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px;
+        }
+        
+        .item-total {
+            font-weight: 600;
+            color: #1a1a1a;
+            text-align: right;
+            min-width: 80px;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .order-summary {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: 700;
+            border-top: 2px solid #1a1a1a;
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+        
+        .savings-highlight {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .payment-section {
+            margin-top: 20px;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .payment-btn {
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .payment-btn.active {
+            border-color: #1a1a1a;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .payment-btn:hover {
+            border-color: #1a1a1a;
+        }
+        
+        .order-notes {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .order-notes:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .empty-order {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+        }
+        
+        .no-distributor {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal h3 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            padding: 10px 12px;
+            border: 2px solid #e5e5e5;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .stock-low {
+            border-color: #ffc107 !important;
+            background: #fff8e1;
+        }
+        
+        .stock-out {
+            border-color: #dc3545 !important;
+            background: #ffeaa7;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .tier-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        .minimum-alert {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 SmartFree ERP - Distribuidores</h1>
+            <p>Sistema de ventas B2B con precios especiales para distribuidores mayoristas</p>
+            
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalDistributors">12</div>
+                    <div class="stat-label">Distribuidores Activos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="monthSales">$127,450</div>
+                    <div class="stat-label">Ventas del Mes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="avgOrder">$8,450</div>
+                    <div class="stat-label">Pedido Promedio</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalSavings">$23,890</div>
+                    <div class="stat-label">Ahorros Generados</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-grid">
+            <div class="left-panel">
+                <!-- SECCIÓN DE DISTRIBUIDORES -->
+                <div class="distributors-section">
+                    <div class="section-title">
+                        <span>👥 Distribuidores Registrados</span>
+                        <button class="add-distributor-btn" onclick="openAddDistributorModal()">
+                            ➕ Nuevo Distribuidor
+                        </button>
+                    </div>
+                    
+                    <div class="distributors-grid" id="distributorsGrid">
+                        <!-- Los distribuidores se cargarán dinámicamente -->
+                    </div>
+                </div>
+                
+                <!-- SECCIÓN DE PRODUCTOS -->
+                <div class="products-section">
+                    <div class="section-title">
+                        <span>📦 Catálogo de Productos B2B</span>
+                    </div>
+                    
+                    <div class="search-filters">
+                        <input type="text" class="search-bar" placeholder="🔍 Buscar productos..." id="searchInput">
+                        <select class="filter-select" id="categoryFilter">
+                            <option value="">Todas las categorías</option>
+                            <option value="pasto">Pasto Sintético</option>
+                            <option value="adhesivos">Adhesivos</option>
+                            <option value="herramientas">Herramientas</option>
+                            <option value="preparacion">Preparación</option>
+                            <option value="kits">Kits Completos</option>
+                        </select>
+                        <button class="bulk-btn" onclick="enableBulkMode()">📋 Pedido Masivo</button>
+                    </div>
+                    
+                    <div class="products-grid" id="productsGrid">
+                        <!-- Los productos se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN DEL PEDIDO -->
+            <div class="order-section">
+                <div class="order-header">
+                    <h3>🛒 Pedido B2B</h3>
+                </div>
+                
+                <div id="noDistributorSelected" class="no-distributor">
+                    <h4>Selecciona un Distribuidor</h4>
+                    <p>Elige un distribuidor de la lista para comenzar a crear un pedido</p>
+                </div>
+                
+                <div id="orderContent" style="display: none;">
+                    <div class="distributor-info-panel" id="distributorInfoPanel">
+                        <!-- Info del distribuidor seleccionado -->
+                    </div>
+                    
+                    <div class="order-items" id="orderItems">
+                        <div class="empty-order">
+                            <p>No hay productos en el pedido</p>
+                            <small>Selecciona productos del catálogo</small>
+                        </div>
+                    </div>
+                    
+                    <div class="order-summary" id="orderSummary" style="display: none;">
+                        <div class="summary-row">
+                            <span>Subtotal Regular:</span>
+                            <span id="regularSubtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Subtotal Distribuidor:</span>
+                            <span id="distributorSubtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row savings-highlight">
+                            <span>Ahorro Total:</span>
+                            <span id="totalSavings">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>IVA (16%):</span>
+                            <span id="tax">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total a Pagar:</span>
+                            <span id="total">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-section" id="paymentSection" style="display: none;">
+                        <div class="tier-info" id="tierInfo">
+                            <!-- Info del tier del distribuidor -->
+                        </div>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-btn active" data-method="credito">
+                                💳 Crédito 30 días
+                            </div>
+                            <div class="payment-btn" data-method="transferencia">
+                                🏦 Transferencia
+                            </div>
+                            <div class="payment-btn" data-method="efectivo">
+                                💵 Efectivo
+                            </div>
+                        </div>
+                        
+                        <textarea class="order-notes" placeholder="Notas del pedido, instrucciones de entrega, etc." id="orderNotes"></textarea>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" onclick="generateQuote()">📄 Cotización</button>
+                            <button class="btn btn-primary" onclick="processOrder()">✅ Procesar Pedido</button>
+                        </div>
+                        
+                        <div class="minimum-alert" id="minimumAlert" style="display: none;">
+                            ⚠️ Este distribuidor requiere un pedido mínimo de $5,000
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL AGREGAR DISTRIBUIDOR -->
+    <div class="modal" id="addDistributorModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAddDistributorModal()">&times;</span>
+            <h3>➕ Registrar Nuevo Distribuidor</h3>
+            
+            <form id="distributorForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la Empresa</label>
+                        <input type="text" class="form-input" id="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">RFC</label>
+                        <input type="text" class="form-input" id="rfc" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Contacto Principal</label>
+                        <input type="text" class="form-input" id="contactName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" class="form-input" id="phone" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Distribuidor</label>
+                        <select class="form-select" id="distributorTier" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="bronce">Bronce (5% descuento)</option>
+                            <option value="plata">Plata (10% descuento)</option>
+                            <option value="oro">Oro (15% descuento)</option>
+                            <option value="platino">Platino (20% descuento)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group full">
+                    <label class="form-label">Dirección Completa</label>
+                    <textarea class="form-textarea" id="address" required></textarea>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Límite de Crédito</label>
+                        <input type="number" class="form-input" id="creditLimit" min="0" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pedido Mínimo</label>
+                        <input type="number" class="form-input" id="minimumOrder" value="5000" min="0" step="500">
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddDistributorModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Registrar Distribuidor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeOrderModal()">&times;</span>
+            <h3>✅ Pedido Procesado</h3>
+            <p>El pedido ha sido registrado exitosamente</p>

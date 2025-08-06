@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree ERP - Nuevo Proveedor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-black text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <button id="backBtn" class="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        <span>Volver a Proveedores</span>
+                    </button>
+                </div>
+                <h1 class="text-xl font-bold">SmartFree ERP</h1>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-300">Admin</span>
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Title -->
+        <div class="mb-8 fade-in">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Nuevo Proveedor</h2>
+            <p class="text-gray-600">Registra un nuevo proveedor en el sistema SmartFree</p>
+        </div>
+
+        <!-- Form Container -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden fade-in">
+            <form id="proveedorForm" class="p-8 space-y-8">
+                
+                <!-- Información Básica -->
+                <div class="border-b border-gray-200 pb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-black text-white p-2 rounded-lg">
+                            <i data-lucide="building" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900">Información Básica</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Nombre de la Empresa *
+                            </label>
+                            <input type="text" id="nombreEmpresa" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: Distribuidora ABC S.A. de C.V.">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Nombre Comercial
+                            </label>
+                            <input type="text" id="nombreComercial"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: ABC Distribuidora">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                RFC *
+                            </label>
+                            <input type="text" id="rfc" required maxlength="13"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all uppercase"
+                                placeholder="Ej: ABC123456789">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Tipo de Proveedor *
+                            </label>
+                            <select id="tipoProveedor" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                                <option value="">Seleccionar tipo</option>
+                                <option value="materiales">Materiales de Pasto</option>
+                                <option value="herramientas">Herramientas e Insumos</option>
+                                <option value="transporte">Transporte y Logística</option>
+                                <option value="servicios">Servicios Generales</option>
+                                <option value="importador">Importador (China)</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="border-b border-gray-200 pb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-black text-white p-2 rounded-lg">
+                            <i data-lucide="phone" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900">Información de Contacto</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Persona de Contacto *
+                            </label>
+                            <input type="text" id="contacto" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: Juan Pérez">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Cargo
+                            </label>
+                            <input type="text" id="cargo"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: Gerente de Ventas">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Teléfono Principal *
+                            </label>
+                            <input type="tel" id="telefono" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: +52 477 123 4567">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Teléfono Alternativo
+                            </label>
+                            <input type="tel" id="telefonoAlt"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: +52 477 987 6543">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Principal *
+                            </label>
+                            <input type="email" id="email" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: ventas@empresa.com">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Alternativo
+                            </label>
+                            <input type="email" id="emailAlt"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: contacto@empresa.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dirección -->
+                <div class="border-b border-gray-200 pb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-black text-white p-2 rounded-lg">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900">Dirección</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Calle y Número *
+                            </label>
+                            <input type="text" id="direccion" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: Av. Industrial 123">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Código Postal *
+                            </label>
+                            <input type="text" id="codigoPostal" required maxlength="5"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: 37000">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Colonia *
+                            </label>
+                            <input type="text" id="colonia" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: Centro">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Ciudad *
+                            </label>
+                            <input type="text" id="ciudad" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: León">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Estado *
+                            </label>
+                            <select id="estado" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                                <option value="">Seleccionar estado</option>
+                                <option value="Guanajuato">Guanajuato</option>
+                                <option value="Jalisco">Jalisco</option>
+                                <option value="Michoacán">Michoacán</option>
+                                <option value="Querétaro">Querétaro</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Comercial -->
+                <div class="border-b border-gray-200 pb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-black text-white p-2 rounded-lg">
+                            <i data-lucide="credit-card" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900">Información Comercial</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Días de Crédito
+                            </label>
+                            <select id="diasCredito"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                                <option value="0">Sin crédito (Contado)</option>
+                                <option value="15">15 días</option>
+                                <option value="30">30 días</option>
+                                <option value="45">45 días</option>
+                                <option value="60">60 días</option>
+                                <option value="90">90 días</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Límite de Crédito
+                            </label>
+                            <input type="number" id="limiteCredito" min="0" step="0.01"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: 50000.00">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Descuento General (%)
+                            </label>
+                            <input type="number" id="descuento" min="0" max="100" step="0.1"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: 5.0">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Moneda Preferida
+                            </label>
+                            <select id="moneda"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                                <option value="MXN">MXN (Peso Mexicano)</option>
+                                <option value="USD">USD (Dólar Americano)</option>
+                                <option value="EUR">EUR (Euro)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Forma de Pago Preferida
+                            </label>
+                            <select id="formaPago"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                                <option value="transferencia">Transferencia Bancaria</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta de Crédito</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Prioridad
+                            </label>
+                            <select id="prioridad"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all">
+                                <option value="baja">Baja</option>
+                                <option value="media">Media</option>
+                                <option value="alta">Alta</option>
+                                <option value="critica">Crítica</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Bancaria -->
+                <div class="border-b border-gray-200 pb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-black text-white p-2 rounded-lg">
+                            <i data-lucide="landmark" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900">Información Bancaria</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Banco
+                            </label>
+                            <input type="text" id="banco"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: BBVA Bancomer">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Número de Cuenta
+                            </label>
+                            <input type="text" id="numeroCuenta"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: 1234567890123456">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                CLABE Interbancaria
+                            </label>
+                            <input type="text" id="clabe" maxlength="18"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: 012345678901234567">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Beneficiario
+                            </label>
+                            <input type="text" id="beneficiario"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                                placeholder="Ej: Empresa ABC S.A. de C.V.">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Observaciones -->
+                <div class="pb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-black text-white p-2 rounded-lg">
+                            <i data-lucide="file-text" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900">Observaciones y Notas</h3>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Productos/Servicios que Ofrece
+                            </label>
+                            <textarea id="productos" rows="3"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
+                                placeholder="Describe los productos o servicios que ofrece este proveedor..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Observaciones Generales
+                            </label>
+                            <textarea id="observaciones" rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none"
+                                placeholder="Notas adicionales, condiciones especiales, horarios de atención, etc..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button type="submit" id="guardarBtn"
+                        class="flex-1 bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 hover-scale">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        <span>Guardar Proveedor</span>
+                    </button>
+                    
+                    <button type="button" id="guardarContinuarBtn"
+                        class="flex-1 bg-gray-800 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors flex items-center justify-center space-x-2 hover-scale">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                        <span>Guardar y Crear Otro</span>
+                    </button>
+                    
+                    <button type="button" id="cancelarBtn"
+                        class="flex-1 bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2 hover-scale">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                        <span>Cancelar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in">
+        <div class="flex items-center space-x-2">
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            <span id="toastMessage">Proveedor guardado exitosamente</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Form elements
+        const form = document.getElementById('proveedorForm');
+        const rfcInput = document.getElementById('rfc');
+        const codigoPostalInput = document.getElementById('codigoPostal');
+        const clabeInput = document.getElementById('clabe');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // Auto-uppercase RFC
+        rfcInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+
+        // Validate RFC format
+        rfcInput.addEventListener('blur', function() {
+            const rfcPattern = /^[A-Z]{3,4}[0-9]{6}[A-Z0-9]{3}$/;
+            if (this.value && !rfcPattern.test(this.value)) {
+                this.classList.add('border-red-500');
+                showToast('Formato de RFC inválido', 'error');
+            } else {
+                this.classList.remove('border-red-500');
+            }
+        });
+
+        // Validate postal code (numbers only)
+        codigoPostalInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        // Validate CLABE (numbers only)
+        clabeInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 fade-in ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white`;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            if (!isValid) {
+                showToast('Por favor complete todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            // Simulate saving
+            const submitBtn = document.getElementById('guardarBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Guardando...</span>';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                showToast('Proveedor guardado exitosamente');
+                
+                // Reset form after successful save
+                form.reset();
+                
+                lucide.createIcons();
+            }, 2000);
+        });
+
+        // Save and continue button
+        document.getElementById('guardarContinuarBtn').addEventListener('click', function() {
+            const event = new Event('submit');
+            form.dispatchEvent(event);
+        });
+
+        // Cancel button
+        document.getElementById('cancelarBtn').addEventListener('click', function() {
+            if (confirm('¿Está seguro de que desea cancelar? Se perderán los datos no guardados.')) {
+                form.reset();
+                showToast('Operación cancelada', 'error');
+            }
+        });
+
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', function() {
+            if (confirm('¿Está seguro de que desea salir? Se perderán los datos no guardados.')) {
+                showToast('Regresando a la lista de proveedores...');
+            }
+        });
+
+        // Auto-fill beneficiario when empresa name changes
+        document.getElementById('nombreEmpresa').addEventListener('blur', function() {
+            const beneficiarioField = document.getElementById('beneficiario');
+            if (this.value && !beneficiarioField.value) {
+                beneficiarioField.value = this.value;
+            }
+        });
+
+        // Real-time validation feedback
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.hasAttribute('required') && this.value.trim()) {
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-green-500');
+                } else if (this.hasAttribute('required')) {
+                    this.classList.remove('border-green-500');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

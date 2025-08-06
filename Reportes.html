@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFree ERP - Reportería</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-x: auto;
+        }
+
+        .header {
+            background-color: #000;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .filters {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #374151;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 3px solid #000;
+        }
+
+        .summary-card h3 {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .summary-card .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .summary-card .change {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .positive {
+            color: #059669;
+        }
+
+        .negative {
+            color: #dc2626;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            min-height: 300px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 0.75rem;
+            color: #111827;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .detailed-table {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .table-header h3 {
+            color: #111827;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .channel-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .pos { background-color: #10b981; }
+        .operations { background-color: #f59e0b; }
+        .distributors { background-color: #3b82f6; }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.75rem;
+            }
+            
+            .charts-section {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .filters-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-cards {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📊 SmartFree ERP - Reportería</h1>
+        <div class="user-info">
+            <span>Admin: Manolo</span>
+            <button class="btn btn-secondary">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label>Período</label>
+                    <select id="period">
+                        <option value="day">Hoy</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month" selected>Este Mes</option>
+                        <option value="year">Este Año</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Fecha Inicio</label>
+                    <input type="date" id="startDate" value="2024-08-01">
+                </div>
+                <div class="filter-group">
+                    <label>Fecha Fin</label>
+                    <input type="date" id="endDate" value="2024-08-31">
+                </div>
+                <div class="filter-group">
+                    <label>Canal</label>
+                    <select id="channel">
+                        <option value="all">Todos los Canales</option>
+                        <option value="pos">Punto de Venta</option>
+                        <option value="operations">Operaciones</option>
+                        <option value="distributors">Distribuidores</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn" onclick="updateReports()">Actualizar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suma Total de los 3 Canales -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Ingresos Totales (3 Canales)</h3>
+                <div class="amount">$245,680</div>
+                <div class="change positive">+12.5% vs mes anterior</div>
+            </div>
+            <div class="summary-card">
+                <h3>Gastos Totales (3 Canales)</h3>
+                <div class="amount">$128,450</div>
+                <div class="change negative">+8.2% vs mes anterior</div>
+            </div>
+            <div class="summary-card">
+                <h3>Ganancia Neta Total</h3>
+                <div class="amount">$117,230</div>
+                <div class="change positive">+18.3% vs mes anterior</div>
+            </div>
+            <div class="summary-card">
+                <h3>Margen de Ganancia Global</h3>
+                <div class="amount">47.7%</div>
+                <div class="change positive">+2.1% vs mes anterior</div>
+            </div>
+        </div>
+
+        <!-- Gráficas de Rendimiento -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3>📈 Rendimiento por Canal - Agosto 2024</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+                    <!-- Punto de Venta -->
+                    <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 8px;">
+                        <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">PUNTO DE VENTA</div>
+                        <div style="font-size: 1.25rem; font-weight: bold;">$89,450</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8;">156 transacciones</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.875rem; font-weight: 600;">Margen: 52.9%</div>
+                    </div>
+                    <!-- Operaciones -->
+                    <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 8px;">
+                        <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">OPERACIONES</div>
+                        <div style="font-size: 1.25rem; font-weight: bold;">$98,230</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8;">23 proyectos</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.875rem; font-weight: 600;">Margen: 40.2%</div>
+                    </div>
+                    <!-- Distribuidores -->
+                    <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 8px;">
+                        <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">DISTRIBUIDORES</div>
+                        <div style="font-size: 1.25rem; font-weight: bold;">$58,000</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8;">34 ventas B2B</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.875rem; font-weight: 600;">Margen: 52.5%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <h3>📊 Comparativa de Períodos</h3>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8f9fa; border-radius: 6px; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Hoy (02 Ago 2024)</span>
+                        <span style="color: #10b981; font-weight: bold;">$8,450</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8f9fa; border-radius: 6px; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Esta Semana</span>
+                        <span style="color: #10b981; font-weight: bold;">$52,180</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #000; color: white; border-radius: 6px; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">Este Mes</span>
+                        <span style="color: #10b981; font-weight: bold;">$245,680</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8f9fa; border-radius: 6px;">
+                        <span style="font-weight: 600;">Este Año</span>
+                        <span style="color: #10b981; font-weight: bold;">$1,847,520</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla Detallada -->
+        <div class="detailed-table">
+            <div class="table-header">
+                <h3>Detalle por Canal - Agosto 2024</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-secondary" onclick="exportToExcel()">Excel</button>
+                    <button class="btn btn-secondary" onclick="exportToPDF()">PDF</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Canal</th>
+                        <th>Ingresos</th>
+                        <th>Gastos</th>
+                        <th>Ganancia</th>
+                        <th>Margen %</th>
+                        <th>Transacciones</th>
+                        <th>Ticket Promedio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="channel-indicator pos"></span>Punto de Venta</td>
+                        <td>$89,450</td>
+                        <td>$42,120</td>
+                        <td>$47,330</td>
+                        <td>52.9%</td>
+                        <td>156</td>
+                        <td>$573</td>
+                    </tr>
+                    <tr>
+                        <td><span class="channel-indicator operations"></span>Operaciones</td>
+                        <td>$98,230</td>
+                        <td>$58,780</td>
+                        <td>$39,450</td>
+                        <td>40.2%</td>
+                        <td>23</td>
+                        <td>$4,271</td>
+                    </tr>
+                    <tr>
+                        <td><span class="channel-indicator distributors"></span>Distribuidores</td>
+                        <td>$58,000</td>
+                        <td>$27,550</td>
+                        <td>$30,450</td>
+                        <td>52.5%</td>
+                        <td>34</td>
+                        <td>$1,706</td>
+                    </tr>
+                    <tr style="background-color: #f3f4f6; font-weight: 600;">
+                        <td><strong>TOTAL</strong></td>
+                        <td><strong>$245,680</strong></td>
+                        <td><strong>$128,450</strong></td>
+                        <td><strong>$117,230</strong></td>
+                        <td><strong>47.7%</strong></td>
+                        <td><strong>213</strong></td>
+                        <td><strong>$1,154</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Gastos Fijos: Nóminas, Rentas, Materiales -->
+        <div class="detailed-table">
+            <div class="table-header">
+                <h3>💰 Gastos Fijos - Agosto 2024</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-secondary" onclick="exportGastosFijos()">📊 Analizar</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo de Gasto</th>
+                        <th>Concepto</th>
+                        <th>Presupuestado</th>
+                        <th>Real</th>
+                        <th>Diferencia</th>
+                        <th>% Variación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- NÓMINAS -->
+                    <tr style="background-color: #f0f9ff;">
+                        <td rowspan="4" style="vertical-align: middle; font-weight: bold; color: #1e40af;">NÓMINAS</td>
+                        <td>Administración</td>
+                        <td>$18,000</td>
+                        <td>$18,000</td>
+                        <td>$0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr style="background-color: #f0f9ff;">
+                        <td>Instaladores</td>
+                        <td>$12,000</td>
+                        <td>$13,200</td>
+                        <td class="negative">-$1,200</td>
+                        <td class="negative">+10%</td>
+                    </tr>
+                    <tr style="background-color: #f0f9ff;">
+                        <td>Vendedores</td>
+                        <td>$5,000</td>
+                        <td>$5,000</td>
+                        <td>$0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr style="background-color: #f0f9ff;">
+                        <td><strong>Subtotal Nóminas</strong></td>
+                        <td><strong>$35,000</strong></td>
+                        <td><strong>$36,200</strong></td>
+                        <td class="negative"><strong>-$1,200</strong></td>
+                        <td class="negative"><strong>+3.4%</strong></td>
+                    </tr>
+                    
+                    <!-- RENTAS -->
+                    <tr style="background-color: #f0fdf4;">
+                        <td rowspan="4" style="vertical-align: middle; font-weight: bold; color: #166534;">RENTAS</td>
+                        <td>Oficina Principal</td>
+                        <td>$8,000</td>
+                        <td>$8,000</td>
+                        <td>$0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr style="background-color: #f0fdf4;">
+                        <td>Bodega de Inventario</td>
+                        <td>$3,000</td>
+                        <td>$3,000</td>
+                        <td>$0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr style="background-color: #f0fdf4;">
+                        <td>Punto de Venta</td>
+                        <td>$1,000</td>
+                        <td>$1,000</td>
+                        <td>$0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr style="background-color: #f0fdf4;">
+                        <td><strong>Subtotal Rentas</strong></td>
+                        <td><strong>$12,000</strong></td>
+                        <td><strong>$12,000</strong></td>
+                        <td><strong>$0</strong></td>
+                        <td><strong>0%</strong></td>
+                    </tr>
+                    
+                    <!-- MATERIALES -->
+                    <tr style="background-color: #fef3c7;">
+                        <td rowspan="5" style="vertical-align: middle; font-weight: bold; color: #92400e;">MATERIALES</td>
+                        <td>Herramientas de Instalación</td>
+                        <td>$2,000</td>
+                        <td>$1,890</td>
+                        <td class="positive">+$110</td>
+                        <td class="positive">-5.5%</td>
+                    </tr>
+                    <tr style="background-color: #fef3c7;">
+                        <td>Adhesivos y Pegamentos</td>
+                        <td>$1,500</td>
+                        <td>$1,620</td>
+                        <td class="negative">-$120</td>
+                        <td class="negative">+8%</td>
+                    </tr>
+                    <tr style="background-color: #fef3c7;">
+                        <td>Materiales de Fijación</td>
+                        <td>$800</td>
+                        <td>$750</td>
+                        <td class="positive">+$50</td>
+                        <td class="positive">-6.3%</td>
+                    </tr>
+                    <tr style="background-color: #fef3c7;">
+                        <td>Transporte y Logística</td>
+                        <td>$200</td>
+                        <td>$20</td>
+                        <td class="positive">+$180</td>
+                        <td class="positive">-90%</td>
+                    </tr>
+                    <tr style="background-color: #fef3c7;">
+                        <td><strong>Subtotal Materiales</strong></td>
+                        <td><strong>$4,500</strong></td>
+                        <td><strong>$4,280</strong></td>
+                        <td class="positive"><strong>+$220</strong></td>
+                        <td class="positive"><strong>-4.9%</strong></td>
+                    </tr>
+                    
+                    <!-- OTROS -->
+                    <tr style="background-color: #f3f4f6;">
+                        <td style="font-weight: bold;">OTROS</td>
+                        <td>Seguros y Varios</td>
+                        <td>$2,800</td>
+                        <td>$2,800</td>
+                        <td>$0</td>
+                        <td>0%</td>
+                    </tr>
+                    
+                    <!-- TOTAL -->
+                    <tr style="background-color: #111827; color: white; font-weight: 600;">
+                        <td colspan="2"><strong>TOTAL GASTOS FIJOS</strong></td>
+                        <td><strong>$54,300</strong></td>
+                        <td><strong>$55,280</strong></td>
+                        <td style="color: #fca5a5;"><strong>-$980</strong></td>
+                        <td style="color: #fca5a5;"><strong>+1.8%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de gráficas
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.color = '#374151';
+
+        // Gráfico de barras - Ingresos vs Gastos por Canal
+        const channelCtx = document.getElementById('channelChart').getContext('2d');
+        const channelChart = new Chart(channelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Punto de Venta', 'Operaciones', 'Distribuidores'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [89450, 98230, 58000],
+                    backgroundColor: '#10b981',
+                    borderColor: '#059669',
+                    borderWidth: 1
+                }, {
+                    label: 'Gastos',
+                    data: [42120, 58780, 27550],
+                    backgroundColor: '#ef4444',
+                    borderColor: '#dc2626',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de pastel - Distribución de Ingresos
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Punto de Venta', 'Operaciones', 'Distribuidores'],
+                datasets: [{
+                    data: [89450, 98230, 58000],
+                    backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'],
+                    borderColor: ['#059669', '#d97706', '#2563eb'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.2,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 8,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed * 100) / total).toFixed(1);
+                                return context.label + ': 
+
+        // Funciones de interacción y exportación
+        function updateReports() {
+            const period = document.getElementById('period').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const channel = document.getElementById('channel').value;
+            
+            alert(`Actualizando reportes...\n\nPeríodo: ${period}\nFecha inicio: ${startDate}\nFecha fin: ${endDate}\nCanal: ${channel}\n\nEn la implementación real, esto cargaría nuevos datos según los filtros seleccionados.`);
+        }
+
+        function exportToExcel() {
+            alert('📊 Exportando a Excel...\n\n✅ Incluye:\n• Suma total de los 3 canales\n• Detalle por canal (POS, Operaciones, Distribuidores)\n• Gastos fijos detallados (Nóminas, Rentas, Materiales)\n• Comparativas de períodos\n• Gráficas de rendimiento\n\nEn la implementación real, se generaría un archivo Excel completo con todas las hojas de datos.');
+        }
+
+        function exportToPDF() {
+            alert('📄 Exportando a PDF...\n\n✅ Incluye:\n• Reporte ejecutivo consolidado\n• Gráficas de rendimiento visuales\n• Suma total de los 3 canales\n• Análisis de gastos fijos\n• Comparativas de períodos\n• Conclusiones y recomendaciones\n\nEn la implementación real, se generaría un PDF profesional con el reporte completo.');
+        }
+
+        function exportGastosFijos() {
+            alert('📈 Análisis de Gastos Fijos...\n\n✅ Análisis incluye:\n• Nóminas: Variación +3.4% (sobrecosto en instaladores)\n• Rentas: Sin variación (control perfecto)\n• Materiales: Ahorro -4.9% (eficiencia en compras)\n• Otros: Sin variación\n\n🎯 Recomendación:\n• Revisar horas extra de instaladores\n• Mantener control actual de rentas\n• Aprovechar eficiencia en materiales');
+        }
+
+        // Actualizar fechas según el período seleccionado
+        document.getElementById('period').addEventListener('change', function() {
+            const period = this.value;
+            const today = new Date();
+            const startDate = document.getElementById('startDate');
+            const endDate = document.getElementById('endDate');
+            
+            switch(period) {
+                case 'day':
+                    startDate.value = today.toISOString().split('T')[0];
+                    endDate.value = today.toISOString().split('T')[0];
+                    break;
+                case 'week':
+                    const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+                    startDate.value = weekStart.toISOString().split('T')[0];
+                    endDate.value = new Date().toISOString().split('T')[0];
+                    break;
+                case 'month':
+                    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                    startDate.value = monthStart.toISOString().split('T')[0];
+                    endDate.value = new Date().toISOString().split('T')[0];
+                    break;
+                case 'year':
+                    const yearStart = new Date(today.getFullYear(), 0, 1);
+                    startDate.value = yearStart.toISOString().split('T')[0];
+                    endDate.value = new Date().toISOString().split('T')[0];
+                    break;
+            }
+        });
+    </script>
+</body>
+</html> + context.parsed.toLocaleString() + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 10
+                    }
+                }
+            }
+        });
+
+        // Funciones de interacción
+        function updateReports() {
+            alert('Actualizando reportes...\n\nEn la implementación real, esto cargaría nuevos datos según los filtros seleccionados.');
+        }
+
+        function exportToExcel() {
+            alert('Exportando a Excel...\n\nEn la implementación real, se generaría un archivo Excel con todos los datos del reporte.');
+        }
+
+        function exportToPDF() {
+            alert('Exportando a PDF...\n\nEn la implementación real, se generaría un PDF con el reporte completo incluyendo gráficas.');
+        }
+
+        // Actualizar fechas según el período seleccionado
+        document.getElementById('period').addEventListener('change', function() {
+            const period = this.value;
+            const today = new Date();
+            const startDate = document.getElementById('startDate');
+            const endDate = document.getElementById('endDate');
+            
+            switch(period) {
+                case 'day':
+                    startDate.value = today.toISOString().split('T')[0];
+                    endDate.value = today.toISOString().split('T')[0];
+                    break;
+                case 'week':
+                    const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+                    startDate.value = weekStart.toISOString().split('T')[0];
+                    endDate.value = new Date().toISOString().split('T')[0];
+                    break;
+                case 'month':
+                    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                    startDate.value = monthStart.toISOString().split('T')[0];
+                    endDate.value = new Date().toISOString().split('T')[0];
+                    break;
+                case 'year':
+                    const yearStart = new Date(today.getFullYear(), 0, 1);
+                    startDate.value = yearStart.toISOString().split('T')[0];
+                    endDate.value = new Date().toISOString().split('T')[0];
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
